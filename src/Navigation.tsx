@@ -10,8 +10,9 @@ import { Platform } from "react-native"
 
 import { DevMenuScreen } from "Scenes/DevMenu/DevMenu"
 import { HomeScreen } from "Scenes/Home/Home"
-import { ExampleListScreen } from "Scenes/List/ExampleList"
 import { LoginScreen } from "Scenes/Login/Login"
+import { NewsArticleScreen } from "Scenes/News/NewsArticle"
+import { NewsFeedScreen } from "Scenes/News/NewsFeed"
 import { SettingsScreen } from "Scenes/Settings/Settings"
 import { GlobalStore } from "store/GlobalStore"
 
@@ -19,6 +20,26 @@ import { GlobalStore } from "store/GlobalStore"
 const useIsLoggedIn = () =>
   GlobalStore.useAppState((store) => store.auth.isSignedIn)
 const useIsLoggedOut = () => !useIsLoggedIn()
+
+// News tab: a native-stack so tapping an article pushes an article screen, and
+// article-to-article links (intercepted in the WebView) push further screens —
+// the stack's back button walks the reading history.
+const NewsStack = createNativeStackNavigator({
+  screens: {
+    NewsFeed: {
+      screen: NewsFeedScreen,
+      options: { title: "News", headerShown: false },
+    },
+    NewsArticle: {
+      screen: NewsArticleScreen,
+      options: ({ route }) => ({
+        headerShown: true,
+        title:
+          (route.params as { title?: string } | undefined)?.title ?? "Article",
+      }),
+    },
+  },
+})
 
 // Native bottom tabs render a real UITabBarController, so on iOS 26 the system
 // draws the "Liquid Glass" floating tab bar (and falls back to the classic
@@ -46,12 +67,14 @@ const HomeTabs = createNativeBottomTabNavigator({
         }),
       },
     },
-    List: {
-      screen: ExampleListScreen,
+    News: {
+      screen: NewsStack,
       options: {
-        title: "List",
+        title: "News",
         tabBarIcon: Platform.select({
-          ios: { type: "sfSymbol", name: "square.grid.2x2" } as const,
+          ios: { type: "sfSymbol", name: "newspaper" } as const,
+          // Reuses the freed "grid" asset as a placeholder — swap for a
+          // dedicated news icon (rasterized from @artsy/icons) when available.
           android: {
             type: "image",
             source: require("assets/images/tabs/grid.png"),

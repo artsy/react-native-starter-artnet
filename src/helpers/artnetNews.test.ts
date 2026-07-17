@@ -1,0 +1,36 @@
+import { isNewsArticleUrl } from "helpers/artnetNews"
+
+describe("isNewsArticleUrl", () => {
+  it("matches article URLs (news host + trailing -<id>)", () => {
+    expect(
+      isNewsArticleUrl(
+        "https://news.artnet.com/art-world/andy-warhol-threatens-pope-335092"
+      )
+    ).toBe(true)
+    // staging news host
+    expect(
+      isNewsArticleUrl(
+        "https://qa1-news.artnet-dev.com/art-world/some-article-446897"
+      )
+    ).toBe(true)
+    // with query string / trailing slash
+    expect(
+      isNewsArticleUrl("https://news.artnet.com/market/a-story-123/?utm=x")
+    ).toBe(true)
+  })
+
+  it("does not match category / author / search pages", () => {
+    expect(isNewsArticleUrl("https://news.artnet.com/art-world")).toBe(false)
+    expect(isNewsArticleUrl("https://news.artnet.com/author/jdoe")).toBe(false)
+    expect(isNewsArticleUrl("https://news.artnet.com/search/warhol")).toBe(
+      false
+    )
+  })
+
+  it("does not match non-news hosts even with a trailing id", () => {
+    expect(isNewsArticleUrl("https://www.artnet.com/artists/foo-12345")).toBe(
+      false
+    )
+    expect(isNewsArticleUrl("not a url")).toBe(false)
+  })
+})
