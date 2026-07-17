@@ -56,20 +56,22 @@ export const AuthModel: AuthModel = {
         defaultEnvironment,
         graphql`
           query AuthModelHydrateUserQuery {
-            currentUser {
-              id
-              email
+            getCurrentUser {
+              user {
+                id
+                email
+              }
             }
           }
         `,
         {}
       ).toPromise()
-      const currentUser = data?.currentUser
+      const user = data?.getCurrentUser?.user
 
-      if (currentUser) {
+      if (user) {
         actions.setState({
-          userID: currentUser.id ?? null,
-          email: currentUser.email ?? null,
+          userID: user.id ?? null,
+          email: user.email ?? null,
         })
       }
     } catch (error) {

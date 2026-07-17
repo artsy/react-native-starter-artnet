@@ -5,12 +5,21 @@ import { HomeUserTestQuery } from "__generated__/HomeUserTestQuery.graphql"
 import { HomeUser } from "Scenes/Home/HomeUser"
 import { setupTestWrapper } from "utils/test/setupTestWrapper"
 
+// The viewer is nested under `getCurrentUser.user`; extract it the same way
+// HomeScreen does and hand the User fragment ref to HomeUser.
+const HomeUserTestWrapper = (props: HomeUserTestQuery["response"]) => {
+  const user = props.getCurrentUser?.user
+  return user ? <HomeUser currentUser={user} /> : null
+}
+
 const { renderWithRelay } = setupTestWrapper<HomeUserTestQuery>({
-  Component: HomeUser,
+  Component: HomeUserTestWrapper,
   query: graphql`
     query HomeUserTestQuery @relay_test_operation {
-      currentUser {
-        ...HomeUser_currentUser
+      getCurrentUser {
+        user {
+          ...HomeUser_currentUser
+        }
       }
     }
   `,

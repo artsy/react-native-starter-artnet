@@ -1645,7 +1645,6 @@ enum PublicArtListingDomain {
 }
 
 type Query {
-  currentUser: User
   getAiArtworkListingConversationById(
     input: GetConversationRequest_Input
   ): GetConversationResponse!
