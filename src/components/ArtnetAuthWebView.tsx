@@ -1,21 +1,23 @@
 import { Button, Flex, Spacer, Text, useColor } from "@artsy/palette-mobile"
-import CookieManager from "@react-native-cookies/cookies"
 import { ActivityIndicator, Modal } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { WebView, WebViewNavigation } from "react-native-webview"
 
 import { GlobalStore } from "store/GlobalStore"
-import { logger } from "system/logger"
 
 interface ArtnetAuthWebViewProps {
   mode: "login" | "logout"
   visible: boolean
+  // Called when the modal should hide — including a manual "Close" tap (cancel).
+  // Treat this as "dismiss", NOT as "the flow completed".
   onClose: () => void
-  onSuccess?: (session: { sessionCookie: string }) => void
+  // Called only when the flow actually completes (the WebView redirected back to
+  // the main site) — for both login and logout. The gateway session is carried
+  // by the shared native cookie jar, so no cookie value is passed.
+  onSuccess?: () => void
 }
 
 // Extracts the lowercased hostname (without port) from a full URL string.
-// Returns null when the string has no recognizable host.
 const getHost = (url: string): string | null => {
   const match = /^[a-z]+:\/\/([^/?#]+)/i.exec(url)
   if (!match) {
@@ -24,15 +26,18 @@ const getHost = (url: string): string | null => {
   return match[1].split(":")[0].toLowerCase()
 }
 
-const isArtnetHost = (host: string): boolean =>
-  host.endsWith("artnet.com") || host.endsWith("artnet-dev.com")
-
 /**
  * Drives the Artnet gateway OpenID Connect cookie/SSO flow inside an in-app
- * WebView. The gateway rejects non-`*.artnet(-dev).com` returnUrl values, so we
- * cannot use a custom-scheme deep link — instead we watch navigation for the
- * return to the Artnet site and read the `gatewaySession` cookie from the
- * native cookie jar.
+ * WebView, matching how the web client authenticates.
+ *
+ * The gateway's `/login` is a browser redirect flow to the hosted Identity
+ * Server login page; on success it redirects back to `returnUrl` (the main
+ * site) and sets the httpOnly `gatewaySession` cookie. We:
+ *   - detect completion by the redirect landing back on the main site host, and
+ *   - rely on the SHARED native cookie jar (`sharedCookiesEnabled` on iOS;
+ *     Android's ForwardingCookieHandler) so `gatewaySession` is sent
+ *     automatically on subsequent Relay/GraphQL requests — no need to read the
+ *     httpOnly cookie by hand.
  */
 export const ArtnetAuthWebView: React.FC<ArtnetAuthWebViewProps> = ({
   mode,
@@ -42,39 +47,30 @@ export const ArtnetAuthWebView: React.FC<ArtnetAuthWebViewProps> = ({
 }) => {
   const color = useColor()
   const insets = useSafeAreaInsets()
-  const { loginURL, logoutURL, webURL, gatewayURL } = GlobalStore.useAppState(
+  const { loginURL, logoutURL, webURL } = GlobalStore.useAppState(
     (state) => state.config.environment.strings
   )
 
   const baseURL = mode === "login" ? loginURL : logoutURL
   const sourceURL = `${baseURL}?returnUrl=${encodeURIComponent(webURL)}`
+  // The gateway redirects back to `returnUrl` (the main site) once the SSO flow
+  // finishes; landing on that host is our "done" signal for both login/logout.
+  const returnHost = getHost(webURL)
 
-  const handleNavigationStateChange = async (navState: WebViewNavigation) => {
+  const handleNavigationStateChange = (navState: WebViewNavigation) => {
+    if (navState.loading) {
+      return
+    }
+
     const host = getHost(navState.url)
-
-    // Only act once the flow has returned to the Artnet site after SSO.
-    if (!host || !isArtnetHost(host)) {
-      return
-    }
-
-    // On logout there is nothing to read — landing back on the site means the
-    // session has ended, so simply dismiss.
-    if (mode === "logout") {
+    if (host && returnHost && host === returnHost) {
+      // Landing back on the main site means the flow finished server-side —
+      // login: the session cookie is now in the shared native jar; logout: the
+      // gateway has ended the session. Signal completion (for both modes) and
+      // dismiss. A manual "Close" tap calls only `onClose`, so an interrupted
+      // flow never looks like a completed one.
+      onSuccess?.()
       onClose()
-      return
-    }
-
-    try {
-      const cookies = await CookieManager.get(gatewayURL, true)
-      // The gateway sets an encrypted httpOnly cookie named `gatewaySession`.
-      const sessionCookie = cookies.gatewaySession?.value
-
-      if (sessionCookie) {
-        onSuccess?.({ sessionCookie })
-        onClose()
-      }
-    } catch (error) {
-      logger.error("Failed to read the Artnet session cookie", error as Error)
     }
   }
 
@@ -103,6 +99,10 @@ export const ArtnetAuthWebView: React.FC<ArtnetAuthWebViewProps> = ({
           <WebView
             source={{ uri: sourceURL }}
             onNavigationStateChange={handleNavigationStateChange}
+            // Share cookies with the app's native cookie jar so the gateway
+            // session set here is sent on later GraphQL requests.
+            sharedCookiesEnabled
+            thirdPartyCookiesEnabled
             startInLoadingState
             renderLoading={() => (
               <Flex

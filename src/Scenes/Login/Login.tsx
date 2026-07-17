@@ -35,9 +35,7 @@ export const LoginScreen = () => {
         mode="login"
         visible={webViewVisible}
         onClose={() => setWebViewVisible(false)}
-        onSuccess={({ sessionCookie }) =>
-          GlobalStore.actions.auth.setSession({ sessionCookie })
-        }
+        onSuccess={() => GlobalStore.actions.auth.setSignedIn()}
       />
     </Flex>
   )

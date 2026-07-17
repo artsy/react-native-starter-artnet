@@ -1,20 +1,13 @@
 import { Middleware } from "react-relay-network-modern"
 
-import { unsafe__getAuth } from "store/GlobalStore"
-
-// Attaches the Artnet gateway session cookie to outgoing GraphQL requests.
-// The gateway authenticates via the `gatewaySession` cookie rather than a
-// bearer/access token, so we forward it (when present) on the Cookie header
-// and opt into credentialed fetches.
+// Artnet authenticates GraphQL requests with the `gatewaySession` cookie set
+// during the SSO WebView flow. That cookie lives in the app's shared native
+// cookie jar, so we just opt into credentialed fetches and let the platform
+// attach it automatically (iOS `sharedCookiesEnabled` + NSHTTPCookieStorage;
+// Android's ForwardingCookieHandler) — no bearer token or manual Cookie header.
 export const authMiddleware = (): Middleware => {
   return (next) => async (req) => {
-    const { sessionCookie } = unsafe__getAuth()
-
-    if (sessionCookie) {
-      req.fetchOpts.headers["Cookie"] = `gatewaySession=${sessionCookie}`
-      req.fetchOpts.credentials = "include"
-    }
-
+    req.fetchOpts.credentials = "include"
     return next(req)
   }
 }

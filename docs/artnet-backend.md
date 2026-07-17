@@ -36,27 +36,44 @@ This replaces the old Artsy `me: Me` root field. The Home screen reads
 
 ## Authentication — SSO cookie
 
-The gateway authenticates requests using an **SSO session cookie**, not a bearer
-token:
+The gateway authenticates requests with an **SSO session cookie** (`gatewaySession`),
+not a bearer token — exactly like the web client. There is no credentials API
+and no email/password token endpoint, so the login UI is the Identity Server's
+**hosted page**, shown in an in-app WebView. Everything else in the app is
+native React Native; the WebView is only the sign-in handshake.
 
-- Login is performed through a **WebView** pointed at the Artnet SSO sign-in
-  page. When the user completes sign-in, the gateway sets a **`gatewaySession`**
-  cookie on the WebView's cookie jar.
-- The app extracts the `gatewaySession` cookie and persists it. Subsequent Relay
-  requests to `{gatewayURL}/graphql` send this cookie so the gateway resolves
-  `currentUser` for the authenticated viewer.
+The app mirrors how a browser handles this — it lets the **shared native cookie
+jar** carry the session rather than reading the httpOnly cookie by hand:
+
+- `ArtnetAuthWebView` opens `{gatewayURL}/login?returnUrl={webURL}`. The gateway
+  runs the OpenID Connect authorization-code flow against the Identity Server and,
+  on success, sets `gatewaySession` and redirects back to `returnUrl` (the main
+  site).
+- The WebView uses `sharedCookiesEnabled` (iOS → `NSHTTPCookieStorage`) and
+  Android's `ForwardingCookieHandler`, so cookies set during sign-in are shared
+  with the app's `fetch`. Relay's `authMiddleware` sets `credentials: "include"`,
+  so `gatewaySession` is sent automatically on `{gatewayURL}/graphql` requests —
+  the gateway then resolves `currentUser` for the viewer.
 
 ### Login
 
-1. Present the SSO WebView (`{gatewayURL}` sign-in flow).
-2. On successful sign-in, read the `gatewaySession` cookie from the WebView.
-3. Store the cookie and flip the app into the signed-in navigation group.
+1. Present the SSO WebView (the gateway `/login` flow → hosted IdP page).
+2. Detect completion when the flow **redirects back to the main site host**
+   (`webURL`).
+3. Flip the app into the signed-in group via `GlobalStore.actions.auth.setSignedIn()`.
+   The session itself lives in the native cookie jar (only an `isSignedIn` flag
+   is persisted in the store).
 
 ### Logout
 
-`GlobalStore.actions.auth.signOut()` clears the stored `gatewaySession` cookie
-(and the WebView cookie jar), which drops the app back to the signed-out
-navigation group. Without the cookie the gateway returns `currentUser: null`.
+`GlobalStore.actions.auth.signOut()` clears the local `isSignedIn` flag, dropping
+the app back to the signed-out group. To also end the **server-side** session
+(and expire `gatewaySession`), open `ArtnetAuthWebView` in `logout` mode, which
+loads `{gatewayURL}/logout`.
+
+> No native cookie library is used — cookie handling is entirely via the WebView
+> + the platform cookie jar. This keeps the native build free of unmaintained
+> Gradle dependencies.
 
 ## Staging & Cloudflare Access
 
