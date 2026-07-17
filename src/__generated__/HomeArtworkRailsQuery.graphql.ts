@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d9f1cc3c3aa273641cac8ac32c709b7f>>
+ * @generated SignedSource<<8ef424e06902b312dc9b09c349e5567e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -71,7 +71,7 @@ v2 = [
       "filters": {
         "listingDomain": {
           "keys": [
-            "ArtnetAuction"
+            "ARTNET_AUCTION"
           ]
         }
       },
@@ -89,7 +89,7 @@ v3 = [
       "filters": {
         "listingDomain": {
           "keys": [
-            "Gallery"
+            "GALLERY"
           ]
         }
       },
@@ -201,7 +201,7 @@ return {
         "name": "getPublicArtworkListings",
         "plural": false,
         "selections": (v1/*: any*/),
-        "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"ArtnetAuction\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
+        "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"ARTNET_AUCTION\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
       },
       {
         "alias": "galleries",
@@ -211,7 +211,7 @@ return {
         "name": "getPublicArtworkListings",
         "plural": false,
         "selections": (v1/*: any*/),
-        "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"Gallery\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
+        "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"GALLERY\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
       }
     ],
     "type": "Query",
@@ -241,7 +241,7 @@ return {
         "name": "getPublicArtworkListings",
         "plural": false,
         "selections": (v5/*: any*/),
-        "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"ArtnetAuction\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
+        "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"ARTNET_AUCTION\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
       },
       {
         "alias": "galleries",
@@ -251,21 +251,21 @@ return {
         "name": "getPublicArtworkListings",
         "plural": false,
         "selections": (v5/*: any*/),
-        "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"Gallery\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
+        "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"GALLERY\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
       }
     ]
   },
   "params": {
-    "cacheID": "86a69ac490359e903b9e46f03703d9fe",
+    "cacheID": "9b6b506dd999eb014ccd5f375bd66afa",
     "id": null,
     "metadata": {},
     "name": "HomeArtworkRailsQuery",
     "operationKind": "query",
-    "text": "query HomeArtworkRailsQuery {\n  marketplace: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n  auctions: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"ArtnetAuction\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n  galleries: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"Gallery\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n}\n\nfragment ArtworkRail_listing on ArtListingSummary {\n  id\n  featuredImage {\n    baseImageUrl\n  }\n  listingData {\n    title\n    id\n  }\n  artMarketInstitution {\n    name\n    id\n  }\n}\n"
+    "text": "query HomeArtworkRailsQuery {\n  marketplace: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n  auctions: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"ARTNET_AUCTION\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n  galleries: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"GALLERY\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n}\n\nfragment ArtworkRail_listing on ArtListingSummary {\n  id\n  featuredImage {\n    baseImageUrl\n  }\n  listingData {\n    title\n    id\n  }\n  artMarketInstitution {\n    name\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8f9c5efab9f9dbdf7a127621f9a4864c";
+(node as any).hash = "0281d96d628b200deb2a65d1c8bb1bdd";
 
 export default node;

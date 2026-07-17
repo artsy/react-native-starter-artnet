@@ -9,6 +9,7 @@ import { HomeQuery } from "__generated__/HomeQuery.graphql"
 import { HomeArtworkRails } from "Scenes/Home/HomeArtworkRails"
 import { HomeUser } from "Scenes/Home/HomeUser"
 import { GlobalStore } from "store/GlobalStore"
+import { logger } from "system/logger"
 import { useSystemQueryLoader } from "system/relay/useSystemQueryLoader"
 
 export const HomeScreen = () => {
@@ -45,7 +46,12 @@ export const HomeScreen = () => {
        * failure loading the (optional) marketplace content never takes down the
        * signed-in greeting above.
        */}
-      <ErrorBoundary fallback={<></>}>
+      <ErrorBoundary
+        fallback={<></>}
+        onError={(error) =>
+          logger.error("Failed to load Home artwork rails", error)
+        }
+      >
         <Suspense
           fallback={
             <Flex height={220} justifyContent="center" alignItems="center">

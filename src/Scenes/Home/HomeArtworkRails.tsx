@@ -27,7 +27,7 @@ export const HomeArtworkRails = () => {
             subscriptionId: ""
             page: 1
             pageSize: 10
-            filters: { listingDomain: { keys: ["ArtnetAuction"] } }
+            filters: { listingDomain: { keys: ["ARTNET_AUCTION"] } }
           }
         ) {
           results {
@@ -39,7 +39,7 @@ export const HomeArtworkRails = () => {
             subscriptionId: ""
             page: 1
             pageSize: 10
-            filters: { listingDomain: { keys: ["Gallery"] } }
+            filters: { listingDomain: { keys: ["GALLERY"] } }
           }
         ) {
           results {
