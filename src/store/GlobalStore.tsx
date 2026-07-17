@@ -11,9 +11,11 @@ import { Platform } from "react-native"
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 
 // Bump on every change to a store Model's shape. v1 added the `devMenu` slice
-// (feature-flag overrides + anonymous stickiness id). This repo has no migration
-// runner yet, so a version bump resets persisted state to the new default shape.
-const STORE_VERSION = 1
+// (feature-flag overrides + anonymous stickiness id). v2 reshaped the auth slice
+// for Artnet cookie/SSO auth (sessionCookie/userID/email replacing the old
+// Artsy/Gravity token fields). This repo has no migration runner yet, so a
+// version bump resets persisted state to the new default shape.
+const STORE_VERSION = 2
 
 if (Platform.OS === "ios") {
   // @ts-ignore
