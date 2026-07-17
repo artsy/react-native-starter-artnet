@@ -1,5 +1,8 @@
 import { Action, action, Thunk, thunk } from "easy-peasy"
+import { fetchQuery, graphql } from "react-relay"
 
+import { AuthModelHydrateUserQuery } from "__generated__/AuthModelHydrateUserQuery.graphql"
+import { defaultEnvironment } from "relay/defaultEnvironent"
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 import { logger } from "system/logger"
 
@@ -42,24 +45,26 @@ export const AuthModel: AuthModel = {
     state.isSignedIn = true
   }),
 
-  // Fetches the signed-in viewer from the gateway and records their id/email for
-  // the feature-flag context. Auth rides on the shared cookie jar
-  // (`credentials: "include"`), so no token/header is needed. Best-effort — a
-  // failure just leaves the user fields null.
-  hydrateUser: thunk(async (actions, _payload, { getStoreState }) => {
-    const { graphqlURL } = getStoreState().config.environment.strings
-
+  // Fetches the signed-in viewer and records their id/email for the feature-flag
+  // context. Goes through the Relay network layer, so it reuses the gateway
+  // headers + `credentials: "include"` (auth rides on the shared cookie jar) and
+  // the cache/error middlewares. Best-effort — a failure just leaves the user
+  // fields null.
+  hydrateUser: thunk(async (actions) => {
     try {
-      const response = await fetch(graphqlURL, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: "query CurrentUserAuth { currentUser { id email } }",
-        }),
-      })
-      const json = await response.json()
-      const currentUser = json?.data?.currentUser
+      const data = await fetchQuery<AuthModelHydrateUserQuery>(
+        defaultEnvironment,
+        graphql`
+          query AuthModelHydrateUserQuery {
+            currentUser {
+              id
+              email
+            }
+          }
+        `,
+        {}
+      ).toPromise()
+      const currentUser = data?.currentUser
 
       if (currentUser) {
         actions.setState({
