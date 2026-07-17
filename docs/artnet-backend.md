@@ -61,8 +61,11 @@ jar** carry the session rather than reading the httpOnly cookie by hand:
 2. Detect completion when the flow **redirects back to the main site host**
    (`webURL`).
 3. Flip the app into the signed-in group via `GlobalStore.actions.auth.setSignedIn()`.
-   The session itself lives in the native cookie jar (only an `isSignedIn` flag
-   is persisted in the store).
+   The session itself lives in the native cookie jar; the store keeps an
+   `isSignedIn` flag plus the viewer's `id`/`email`, which `hydrateUser` fetches
+   from `currentUser` (using the shared cookie jar) for the feature-flag
+   targeting context. `hydrateUser` runs on sign-in and on a cold start with a
+   persisted session.
 
 ### Logout
 

@@ -5,6 +5,7 @@ import {
 } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { useStoreRehydrated } from "easy-peasy"
+import { useEffect } from "react"
 import { Platform } from "react-native"
 
 import { DevMenuScreen } from "Scenes/DevMenu/DevMenu"
@@ -121,6 +122,15 @@ const Navigation = createStaticNavigation(RootStack)
  */
 export const Main = () => {
   const isRehydrated = useStoreRehydrated()
+  const isSignedIn = GlobalStore.useAppState((store) => store.auth.isSignedIn)
+
+  // Refresh the current user (feature-flag targeting context) once we're signed
+  // in — both right after login and on a cold start with a persisted session.
+  useEffect(() => {
+    if (isRehydrated && isSignedIn) {
+      GlobalStore.actions.auth.hydrateUser()
+    }
+  }, [isRehydrated, isSignedIn])
 
   if (!isRehydrated) {
     return null
