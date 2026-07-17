@@ -39,7 +39,7 @@ type Query {
 
 This replaces the old Artsy `me: Me` root field. The Home screen reads
 `getCurrentUser { user { … } }` and renders the signed-in user's `displayName`
-and `email`.
+(the email is shown in **Settings**, as "Logged in as: …", not on Home).
 
 ## Authentication — SSO cookie
 
@@ -79,7 +79,9 @@ jar** carry the session rather than reading the httpOnly cookie by hand:
 `GlobalStore.actions.auth.signOut()` clears the local `isSignedIn` flag, dropping
 the app back to the signed-out group. To also end the **server-side** session
 (and expire `gatewaySession`), open `ArtnetAuthWebView` in `logout` mode, which
-loads `{gatewayURL}/logout`.
+loads `{gatewayURL}/logout`. The logout entry point lives in the **Settings**
+tab (which also shows "Logged in as: …"); local state is cleared only once the
+WebView flow completes (`onSuccess`).
 
 > No native cookie library is used — cookie handling is entirely via the WebView
 > + the platform cookie jar. This keeps the native build free of unmaintained
