@@ -1,44 +1,28 @@
-import { Action, action, Thunk,thunk } from "easy-peasy"
-import { stringify } from "qs"
-import Keys from "react-native-keys"
+import CookieManager from "@react-native-cookies/cookies"
+import { Action, action, Thunk, thunk } from "easy-peasy"
 
-import { getUserAgent } from "helpers/getUserAgent"
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 import { logger } from "system/logger"
 
 interface AuthModelState {
-  userAccessToken: string | null
-  userAccessTokenExpiresIn: string | null
+  sessionCookie: string | null
   userID: string | null
-  xAppToken: string | null
-  xApptokenExpiresIn: string | null
+  email: string | null
 }
 
 const authModelInitialState: AuthModelState = {
-  userAccessToken: null,
-  userAccessTokenExpiresIn: null,
+  sessionCookie: null,
   userID: null,
-  xAppToken: null,
-  xApptokenExpiresIn: null,
+  email: null,
 }
+
 export interface AuthModel extends AuthModelState {
   setState: Action<this, Partial<AuthModelState>>
-  setUserID: Thunk<this, void, {}, GlobalStoreModel>
-  getXAppToken: Thunk<this, void, {}, GlobalStoreModel, Promise<string>>
-  gravityUnauthenticatedRequest: Thunk<
+  setSession: Action<
     this,
-    {
-      path: string
-      method?: "GET" | "PUT" | "POST" | "DELETE"
-      body?: object
-      headers?: RequestInit["headers"]
-    },
-    {},
-    GlobalStoreModel,
-    ReturnType<typeof fetch>
+    { sessionCookie: string; userID?: string | null; email?: string | null }
   >
-  signInUsingEmail: Thunk<this, { email: string; password: string }>
-  signOut: Thunk<this>
+  signOut: Thunk<this, void, {}, GlobalStoreModel>
 }
 
 export const AuthModel: AuthModel = {
@@ -48,131 +32,26 @@ export const AuthModel: AuthModel = {
     Object.assign(state, payload)
   }),
 
-  setUserID: thunk(async (actions, _payload, context) => {
-    try {
-      const user = await (
-        await actions.gravityUnauthenticatedRequest({
-          path: `/api/v1/me`,
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "X-ACCESS-TOKEN": context.getState().userAccessToken!,
-          },
-        })
-      ).json()
-
-      actions.setState({
-        userID: user.id,
-      })
-    } catch (error) {
-      logger.error("Failed to fetch the user ID", error as Error)
-      throw error
+  // Flips the nav guard: setting `sessionCookie` moves the app into the
+  // signed-in navigation group.
+  setSession: action((state, payload) => {
+    state.sessionCookie = payload.sessionCookie
+    if (payload.userID !== undefined) {
+      state.userID = payload.userID
+    }
+    if (payload.email !== undefined) {
+      state.email = payload.email
     }
   }),
 
-  getXAppToken: thunk(async (actions, _payload, context) => {
-    const { xAppToken, xApptokenExpiresIn } = context.getState()
-    if (xAppToken && xApptokenExpiresIn && new Date() < new Date(xApptokenExpiresIn)) {
-      return xAppToken
-    }
-
-    const gravityBaseURL = context.getStoreState().config.environment.strings.gravityURL
-
-    const tokenURL = `${gravityBaseURL}/api/v1/xapp_token?${stringify({
-      client_id: Keys.secureFor("ARTSY_API_CLIENT_KEY"),
-      client_secret: Keys.secureFor("ARTSY_API_CLIENT_SECRET"),
-    })}`
-
-    try {
-      const res = await await fetch(tokenURL, {
-        headers: {
-          "User-Agent": getUserAgent(),
-        },
-      })
-
-      const resJson = await res.json()
-      if (resJson.xapp_token && resJson.expires_in) {
-        actions.setState({
-          xAppToken: resJson.xapp_token,
-          xApptokenExpiresIn: resJson.expires_in,
-        })
-        return resJson.xapp_token
-      }
-    } catch (error) {
-      logger.error("Failed to fetch the xApp token", error as Error)
-      throw error
-    }
-  }),
-
-  gravityUnauthenticatedRequest: thunk(async (actions, payload, context) => {
-    const gravityBaseURL = context.getStoreState().config.environment.strings.gravityURL
-    const xAppToken = await actions.getXAppToken()
-
-    try {
-      const res = await fetch(`${gravityBaseURL}${payload.path}`, {
-        method: payload.method || "GET",
-        headers: {
-          "X-Xapp-Token": xAppToken,
-          Accept: "application/json",
-          "User-Agent": getUserAgent(),
-          ...payload.headers,
-        },
-        body: payload.body ? JSON.stringify(payload.body) : undefined,
-      })
-      return res
-    } catch (error) {
-      logger.error("Gravity unauthenticated request failed", error as Error)
-      throw error
-    }
-  }),
-
-  signInUsingEmail: thunk(async (actions, { email, password }) => {
-    try {
-      const result = await actions.gravityUnauthenticatedRequest({
-        path: `/oauth2/access_token`,
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: {
-          email,
-          oauth_provider: "email",
-          password,
-          grant_type: "credentials",
-          scope: "offline_access",
-          client_id: Keys.secureFor("ARTSY_API_CLIENT_KEY"),
-          client_secret: Keys.secureFor("ARTSY_API_CLIENT_SECRET"),
-        },
-      })
-      const resJson = await result.json()
-      // // The user has successfully logged in
-      if (result.status === 201) {
-        const { expires_in, access_token } = resJson
-        // Persist the access token first — setUserID reads it from state to
-        // authenticate the /api/v1/me request.
-        actions.setState({
-          userAccessToken: access_token,
-          userAccessTokenExpiresIn: expires_in,
-        })
-        await actions.setUserID()
-        return {
-          success: true,
-          message: null,
-        }
-      }
-      return {
-        success: false,
-        message: resJson.error_description || "Unable to log in, please try again later",
-      }
-    } catch (error) {
-      return {
-        success: false,
-        message: "Something went wrong",
-      }
-    }
-  }),
-
+  // Resilient sign-out: best-effort cookie clear, then reset auth state. Never
+  // throws so callers don't need to guard it.
   signOut: thunk(async (actions) => {
+    try {
+      await CookieManager.clearAll()
+    } catch (error) {
+      logger.error("Failed to clear cookies on sign out", error as Error)
+    }
     actions.setState(authModelInitialState)
   }),
 }

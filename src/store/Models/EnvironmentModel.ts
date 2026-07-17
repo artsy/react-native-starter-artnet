@@ -15,35 +15,18 @@ function defineEnvironmentOptions<EnvOptionName extends string>(options: {
 }
 
 export const environmentOptions = defineEnvironmentOptions({
-  // Artnet gateway (GraphQL + SSO). This is the backend the app is moving to.
   gatewayURL: {
-    description: "Artnet gateway URL",
+    description: "Gateway URL",
     presets: {
       staging: "https://gateway.artnet-dev.com",
       production: "https://gateway.artnet.com",
     },
   },
   webURL: {
-    description: "Artnet website URL (used as the SSO returnUrl)",
+    description: "Web URL",
     presets: {
       staging: "https://www.artnet-dev.com",
       production: "https://www.artnet.com",
-    },
-  },
-  // Artsy backend — retained temporarily while auth is still Gravity-based.
-  // Removed once the SSO cookie auth lands.
-  gravityURL: {
-    description: "Gravity URL",
-    presets: {
-      staging: "https://stagingapi.artsy.net",
-      production: "https://api.artsy.net",
-    },
-  },
-  metaphysicsURL: {
-    description: "Metaphysics URL",
-    presets: {
-      staging: "https://metaphysics-staging.artsy.net/v2",
-      production: "https://metaphysics-production.artsy.net/v2",
     },
   },
 })
@@ -75,14 +58,12 @@ export const EnvironmentModel: EnvironmentModel = {
   activeEnvironment: "staging",
   strings: computed(({ activeEnvironment }) => {
     const gatewayURL = environmentOptions.gatewayURL.presets[activeEnvironment]
+    const webURL = environmentOptions.webURL.presets[activeEnvironment]
 
     // Derive the gateway endpoints from the resolved gateway URL.
     return {
       gatewayURL,
-      webURL: environmentOptions.webURL.presets[activeEnvironment],
-      gravityURL: environmentOptions.gravityURL.presets[activeEnvironment],
-      metaphysicsURL:
-        environmentOptions.metaphysicsURL.presets[activeEnvironment],
+      webURL,
       graphqlURL: gatewayURL + "/graphql",
       loginURL: gatewayURL + "/login",
       logoutURL: gatewayURL + "/logout",

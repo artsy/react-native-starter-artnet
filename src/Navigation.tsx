@@ -16,7 +16,7 @@ import { GlobalStore } from "store/GlobalStore"
 
 // Auth guards for the static navigator's conditional groups.
 const useIsLoggedIn = () =>
-  !!GlobalStore.useAppState((store) => store.auth.userAccessToken)
+  !!GlobalStore.useAppState((store) => store.auth.sessionCookie)
 const useIsLoggedOut = () => !useIsLoggedIn()
 
 // Native bottom tabs render a real UITabBarController, so on iOS 26 the system

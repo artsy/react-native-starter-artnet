@@ -70,7 +70,8 @@ bump the version and add a migration so persisted state upgrades cleanly.
 
 ## Relay & GraphQL
 
-Data fetching uses **Relay 20** against Artsy's Metaphysics GraphQL API.
+Data fetching uses **Relay 20** against the Artnet GraphQL gateway (see
+[Artnet Backend](./artnet-backend)).
 
 - Load queries through **`useSystemQueryLoader`** (from `src/system/relay/`)
   rather than calling `useLazyLoadQuery` directly, and access the Relay
@@ -131,7 +132,7 @@ src/
 ├── utils/test/             # Test helpers (setupTestWrapper, renderWithWrappers)
 └── __generated__/          # Relay-generated artifacts (do not edit)
 data/
-└── schema.graphql          # Metaphysics GraphQL schema
+└── schema.graphql          # Artnet gateway GraphQL schema
 e2e/
 └── flows/                  # Recorded agent-device .ad e2e checks
 ```
