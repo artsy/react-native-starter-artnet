@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<352aaf6e02987821b296fad657efc9d0>>
+ * @generated SignedSource<<bb7204a0f7df4a30cfaf3f6e3b97167e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,8 +12,8 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type HomeQuery$variables = Record<PropertyKey, never>;
 export type HomeQuery$data = {
-  readonly me: {
-    readonly " $fragmentSpreads": FragmentRefs<"HomeUser_me">;
+  readonly currentUser: {
+    readonly " $fragmentSpreads": FragmentRefs<"HomeUser_currentUser">;
   } | null | undefined;
 };
 export type HomeQuery = {
@@ -31,15 +31,15 @@ const node: ConcreteRequest = {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Me",
+        "concreteType": "User",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "currentUser",
         "plural": false,
         "selections": [
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "HomeUser_me"
+            "name": "HomeUser_currentUser"
           }
         ],
         "storageKey": null
@@ -57,30 +57,30 @@ const node: ConcreteRequest = {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Me",
+        "concreteType": "User",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "currentUser",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "email",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
             "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "displayName",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "email",
             "storageKey": null
           }
         ],
@@ -89,15 +89,15 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "4bf44e03b90e2d93f28c27563dc6240a",
+    "cacheID": "d0f776c5be00d5bbeb8c497799d21ece",
     "id": null,
     "metadata": {},
     "name": "HomeQuery",
     "operationKind": "query",
-    "text": "query HomeQuery {\n  me {\n    ...HomeUser_me\n    id\n  }\n}\n\nfragment HomeUser_me on Me {\n  email\n  name\n}\n"
+    "text": "query HomeQuery {\n  currentUser {\n    ...HomeUser_currentUser\n    id\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
   }
 };
 
-(node as any).hash = "b952a95e8a95989cd96c55acf69cdc8f";
+(node as any).hash = "917d6eb43f4bc75c6e19c6f1c8296f3f";
 
 export default node;

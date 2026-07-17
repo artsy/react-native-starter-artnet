@@ -15,6 +15,23 @@ function defineEnvironmentOptions<EnvOptionName extends string>(options: {
 }
 
 export const environmentOptions = defineEnvironmentOptions({
+  // Artnet gateway (GraphQL + SSO). This is the backend the app is moving to.
+  gatewayURL: {
+    description: "Artnet gateway URL",
+    presets: {
+      staging: "https://gateway.artnet-dev.com",
+      production: "https://gateway.artnet.com",
+    },
+  },
+  webURL: {
+    description: "Artnet website URL (used as the SSO returnUrl)",
+    presets: {
+      staging: "https://www.artnet-dev.com",
+      production: "https://www.artnet.com",
+    },
+  },
+  // Artsy backend — retained temporarily while auth is still Gravity-based.
+  // Removed once the SSO cookie auth lands.
   gravityURL: {
     description: "Gravity URL",
     presets: {
@@ -33,12 +50,19 @@ export const environmentOptions = defineEnvironmentOptions({
 
 export type EnvironmentKey = keyof typeof environmentOptions
 
+// Keys derived from the base environment options (e.g. gateway endpoints).
+type DerivedEnvironmentKey = "graphqlURL" | "loginURL" | "logoutURL"
+
+export type EnvironmentStrings = { [k in EnvironmentKey]: string } & {
+  [k in DerivedEnvironmentKey]: string
+}
+
 interface EnvironmentModelState {
   activeEnvironment: Environment
 }
 
 export interface EnvironmentModel extends EnvironmentModelState {
-  strings: Computed<EnvironmentModel, { [k in EnvironmentKey]: string }>
+  strings: Computed<EnvironmentModel, EnvironmentStrings>
 }
 
 export const EnvironmentModel: EnvironmentModel = {
@@ -50,12 +74,18 @@ export const EnvironmentModel: EnvironmentModel = {
   // Reach out to #practice-mobile for more information
   activeEnvironment: "staging",
   strings: computed(({ activeEnvironment }) => {
-    const result: { [k in EnvironmentKey]: string } = {} as any
+    const gatewayURL = environmentOptions.gatewayURL.presets[activeEnvironment]
 
-    for (const [key, val] of Object.entries(environmentOptions)) {
-      result[key as EnvironmentKey] = val.presets[activeEnvironment]
+    // Derive the gateway endpoints from the resolved gateway URL.
+    return {
+      gatewayURL,
+      webURL: environmentOptions.webURL.presets[activeEnvironment],
+      gravityURL: environmentOptions.gravityURL.presets[activeEnvironment],
+      metaphysicsURL:
+        environmentOptions.metaphysicsURL.presets[activeEnvironment],
+      graphqlURL: gatewayURL + "/graphql",
+      loginURL: gatewayURL + "/login",
+      logoutURL: gatewayURL + "/logout",
     }
-
-    return result
   }),
 }

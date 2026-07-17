@@ -29,7 +29,7 @@ interface SetupTestWrapper<T extends OperationType> {
  * })
  *
  * it("renders", () => {
- *   renderWithRelay({ Me: () => ({ name: "Andy Warhol" }) })
+ *   renderWithRelay({ User: () => ({ displayName: "Andy Warhol" }) })
  *   expect(screen.getByText("Andy Warhol")).toBeTruthy()
  * })
  *
@@ -39,8 +39,8 @@ interface SetupTestWrapper<T extends OperationType> {
  *   Component: HomeUser,
  *   query: graphql`
  *     query HomeUserTestQuery @relay_test_operation {
- *       me {
- *         ...HomeUser_me
+ *       currentUser {
+ *         ...HomeUser_currentUser
  *       }
  *     }
  *   `,
