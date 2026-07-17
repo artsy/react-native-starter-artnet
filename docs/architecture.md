@@ -31,7 +31,8 @@ Navigation uses **react-navigation v7's static API**, defined in
 - A native-stack `RootStack` splits into two conditional **groups** guarded by
   auth state read from the store:
   - `SignedIn` (`useIsLoggedIn`) → the `HomeTabs` bottom-tab navigator
-    (`Home`, `News`, `Settings`).
+    (`Home`, `News`, `Settings`), plus top-level screens pushed **over** the tabs
+    — `Artwork` (opened by tapping a Home rail card) and the dev-only `DevMenu`.
   - `SignedOut` (`useIsLoggedOut`) → the `Login` screen.
 - The param list is registered on the global `ReactNavigation.RootParamList`
   namespace via `StaticParamList<typeof RootStack>`, so `useNavigation()` is

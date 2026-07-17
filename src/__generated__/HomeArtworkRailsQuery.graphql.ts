@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f174a5c0354a6d9d0cef1b7deb302314>>
+ * @generated SignedSource<<d7d342d4cf1fd57ab96088724fcb3872>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -119,12 +119,29 @@ v5 = [
   {
     "alias": null,
     "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  },
+  (v4/*: any*/)
+],
+v6 = [
+  {
+    "alias": null,
+    "args": null,
     "concreteType": "ArtListingSummary",
     "kind": "LinkedField",
     "name": "results",
     "plural": true,
     "selections": [
       (v4/*: any*/),
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "saleName",
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -158,6 +175,48 @@ v5 = [
             "name": "title",
             "storageKey": null
           },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ListingDataArtworkSummary",
+            "kind": "LinkedField",
+            "name": "artworks",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "CreatorSummary",
+                "kind": "LinkedField",
+                "name": "creator",
+                "plural": false,
+                "selections": (v5/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "mediumRaw",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "creationYearFrom",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "creationYearTo",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
           (v4/*: any*/)
         ],
         "storageKey": null
@@ -169,16 +228,7 @@ v5 = [
         "kind": "LinkedField",
         "name": "artMarketInstitution",
         "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          (v4/*: any*/)
-        ],
+        "selections": (v5/*: any*/),
         "storageKey": null
       }
     ],
@@ -239,7 +289,7 @@ return {
         "kind": "LinkedField",
         "name": "getPublicArtworkListings",
         "plural": false,
-        "selections": (v5/*: any*/),
+        "selections": (v6/*: any*/),
         "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"PdbTeaser\",\"Gallery\",\"ArtnetAuction\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
       },
       {
@@ -249,7 +299,7 @@ return {
         "kind": "LinkedField",
         "name": "getPublicArtworkListings",
         "plural": false,
-        "selections": (v5/*: any*/),
+        "selections": (v6/*: any*/),
         "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"ArtnetAuction\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
       },
       {
@@ -259,18 +309,18 @@ return {
         "kind": "LinkedField",
         "name": "getPublicArtworkListings",
         "plural": false,
-        "selections": (v5/*: any*/),
+        "selections": (v6/*: any*/),
         "storageKey": "getPublicArtworkListings(input:{\"filters\":{\"listingDomain\":{\"keys\":[\"Gallery\"]}},\"page\":1,\"pageSize\":10,\"subscriptionId\":\"\"})"
       }
     ]
   },
   "params": {
-    "cacheID": "5bb72f59bd3d84b0d65756d06848c269",
+    "cacheID": "81390b995abb2e78e3363307c43fb1c3",
     "id": null,
     "metadata": {},
     "name": "HomeArtworkRailsQuery",
     "operationKind": "query",
-    "text": "query HomeArtworkRailsQuery {\n  marketplace: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"PdbTeaser\", \"Gallery\", \"ArtnetAuction\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n  auctions: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"ArtnetAuction\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n  galleries: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"Gallery\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n}\n\nfragment ArtworkRail_listing on ArtListingSummary {\n  id\n  featuredImage {\n    baseImageUrl\n  }\n  listingData {\n    title\n    id\n  }\n  artMarketInstitution {\n    name\n    id\n  }\n}\n"
+    "text": "query HomeArtworkRailsQuery {\n  marketplace: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"PdbTeaser\", \"Gallery\", \"ArtnetAuction\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n  auctions: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"ArtnetAuction\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n  galleries: getPublicArtworkListings(input: {subscriptionId: \"\", page: 1, pageSize: 10, filters: {listingDomain: {keys: [\"Gallery\"]}}}) {\n    results {\n      ...ArtworkRail_listing\n      id\n    }\n  }\n}\n\nfragment ArtworkRail_listing on ArtListingSummary {\n  id\n  saleName\n  featuredImage {\n    baseImageUrl\n  }\n  listingData {\n    title\n    artworks {\n      creator {\n        name\n        id\n      }\n      mediumRaw\n      creationYearFrom\n      creationYearTo\n    }\n    id\n  }\n  artMarketInstitution {\n    name\n    id\n  }\n}\n"
   }
 };
 })();
