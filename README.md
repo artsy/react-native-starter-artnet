@@ -13,7 +13,7 @@ Want to know more about Eigen: our Artsy Mobile? Check it out [here](https://git
 This repo is a **GitHub template**, so you can spin up your own app from it:
 
 1. **Get a copy** — click **“Use this template” → Create a new repository** (clean
-   history). Or without GitHub: `npx degit artsy/react-native-starter my-app`, or
+   history). Or without GitHub: `npx degit artsy/react-native-starter-artnet my-app`, or
    fork/clone.
 2. **Set up & install** — outside Artsy run `yarn setup:oss` (placeholder fonts +
    `keys.{development,production}.json`, no private access needed), then
@@ -25,7 +25,7 @@ This repo is a **GitHub template**, so you can spin up your own app from it:
    (`yarn sync-schema`) and replace the sample screens in `src/Scenes/`.
 5. **Generate native projects & run** — `yarn prebuild`, then `yarn ios` / `yarn android`.
 
-See the [Getting Started guide](https://artsy.github.io/react-native-starter/getting-started)
+See the [Getting Started guide](https://artsy.github.io/react-native-starter-artnet/getting-started)
 for details.
 
 ### Getting Started
@@ -87,13 +87,13 @@ font; drop your own `.otf` files there to change it) and creates
 
 ## Documentation
 
-📖 **[artsy.github.io/react-native-starter](https://artsy.github.io/react-native-starter/)** — full docs (VitePress).
+📖 **[artsy.github.io/react-native-starter-artnet](https://artsy.github.io/react-native-starter-artnet/)** — full docs (VitePress).
 
-- [Getting Started](https://artsy.github.io/react-native-starter/getting-started)
-- [Configuration](https://artsy.github.io/react-native-starter/configuration)
-- [Feature Flags](https://artsy.github.io/react-native-starter/feature-flags)
-- [Architecture](https://artsy.github.io/react-native-starter/architecture)
-- [Testing](https://artsy.github.io/react-native-starter/testing) · [E2E Testing](https://artsy.github.io/react-native-starter/e2e-testing)
+- [Getting Started](https://artsy.github.io/react-native-starter-artnet/getting-started)
+- [Configuration](https://artsy.github.io/react-native-starter-artnet/configuration)
+- [Feature Flags](https://artsy.github.io/react-native-starter-artnet/feature-flags)
+- [Architecture](https://artsy.github.io/react-native-starter-artnet/architecture)
+- [Testing](https://artsy.github.io/react-native-starter-artnet/testing) · [E2E Testing](https://artsy.github.io/react-native-starter-artnet/e2e-testing)
 
 The site is built from `docs/` and deployed to GitHub Pages on every push to
 `main` (`yarn docs:dev` to preview locally).
@@ -109,7 +109,7 @@ yarn test           # Jest
 yarn type-check     # Relay compile + tsc
 yarn lint           # ESLint (auto-fix)
 yarn relay          # Compile Relay artifacts
-yarn sync-schema    # Refresh data/schema.graphql from metaphysics
+yarn sync-schema    # Refresh data/schema.graphql from the Artnet gateway
 ```
 
 ## License
