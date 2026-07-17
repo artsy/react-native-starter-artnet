@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2237715ffd8e8c08c0ce719487ec1edf>>
+ * @generated SignedSource<<e5ef3bee00751e96c1c72ee06bb3b35b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,9 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type NewsFeedQuery$variables = Record<PropertyKey, never>;
+export type NewsFeedQuery$variables = {
+  creatorKeys: ReadonlyArray<string>;
+};
 export type NewsFeedQuery$data = {
   readonly getNewsArticles: {
     readonly results: ReadonlyArray<{
@@ -30,24 +32,56 @@ export type NewsFeedQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "creatorKeys"
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "url",
   "storageKey": null
 },
-v1 = [
+v2 = [
   {
     "alias": null,
     "args": [
       {
-        "kind": "Literal",
-        "name": "input",
-        "value": {
-          "page": 1,
-          "pageSize": 30
-        }
+        "fields": [
+          {
+            "fields": [
+              {
+                "fields": [
+                  {
+                    "kind": "Variable",
+                    "name": "keys",
+                    "variableName": "creatorKeys"
+                  }
+                ],
+                "kind": "ObjectValue",
+                "name": "creator"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "filters"
+          },
+          {
+            "kind": "Literal",
+            "name": "page",
+            "value": 1
+          },
+          {
+            "kind": "Literal",
+            "name": "pageSize",
+            "value": 30
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "input"
       }
     ],
     "concreteType": "GetNewsArticlesResponse",
@@ -91,7 +125,7 @@ v1 = [
             "name": "categoryName",
             "storageKey": null
           },
-          (v0/*: any*/),
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -100,7 +134,7 @@ v1 = [
             "name": "featuredImage",
             "plural": true,
             "selections": [
-              (v0/*: any*/)
+              (v1/*: any*/)
             ],
             "storageKey": null
           }
@@ -108,37 +142,37 @@ v1 = [
         "storageKey": null
       }
     ],
-    "storageKey": "getNewsArticles(input:{\"page\":1,\"pageSize\":30})"
+    "storageKey": null
   }
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "NewsFeedQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "NewsFeedQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "8e34af8c8e9cc8e774b620d58eaab32d",
+    "cacheID": "fb8799d9d1f9f5d854d6e3b73b2d0dfc",
     "id": null,
     "metadata": {},
     "name": "NewsFeedQuery",
     "operationKind": "query",
-    "text": "query NewsFeedQuery {\n  getNewsArticles(input: {page: 1, pageSize: 30}) {\n    results {\n      id\n      title\n      author\n      categoryName\n      url\n      featuredImage {\n        url\n      }\n    }\n  }\n}\n"
+    "text": "query NewsFeedQuery(\n  $creatorKeys: [String!]!\n) {\n  getNewsArticles(input: {filters: {creator: {keys: $creatorKeys}}, page: 1, pageSize: 30}) {\n    results {\n      id\n      title\n      author\n      categoryName\n      url\n      featuredImage {\n        url\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "af6c90a23cd93c5aaf390386e377312e";
+(node as any).hash = "e03539205b0219d88a6df8f49955aea0";
 
 export default node;
