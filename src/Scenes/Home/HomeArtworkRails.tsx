@@ -6,6 +6,9 @@ import { HomeArtworkRailsQuery } from "__generated__/HomeArtworkRailsQuery.graph
 import { ArtworkRail } from "Scenes/Home/ArtworkRail"
 import { useSystemQueryLoader } from "system/relay/useSystemQueryLoader"
 
+// Max cards per rail (a rail is a short horizontal scroll, not the full page).
+const RAIL_SIZE = 10
+
 /**
  * A few read-only artwork rails for the Home screen. We fetch ONE unfiltered
  * page of public listings (`getPublicArtworkListings`, no auth/subscription
@@ -38,6 +41,8 @@ export const HomeArtworkRails = () => {
 
   const listings = data.getPublicArtworkListings.results
 
+  // Cap each rail to keep the horizontal scroll short — we fetch a larger page
+  // (40) only so the domain partitions have enough rows to draw from.
   const rails = [
     { title: "On Artnet", listings },
     {
@@ -48,7 +53,9 @@ export const HomeArtworkRails = () => {
       title: "From galleries",
       listings: listings.filter((l) => l.listingDomain === "GALLERY"),
     },
-  ].filter((rail) => rail.listings.length > 0)
+  ]
+    .map((rail) => ({ ...rail, listings: rail.listings.slice(0, RAIL_SIZE) }))
+    .filter((rail) => rail.listings.length > 0)
 
   return (
     <Flex>

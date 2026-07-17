@@ -43,6 +43,20 @@ describe("HomeArtworkRails", () => {
     expect(screen.getByText("From galleries (2)")).toBeTruthy()
   })
 
+  it("caps each rail at RAIL_SIZE (10) items", async () => {
+    renderWithRelay({
+      SearchResults: () => ({
+        results: Array.from({ length: 12 }, () => ({
+          listingDomain: "GALLERY",
+        })),
+      }),
+    })
+
+    // 12 gallery listings fetched, but each rail is capped at 10.
+    expect(await screen.findByText("On Artnet (10)")).toBeTruthy()
+    expect(screen.getByText("From galleries (10)")).toBeTruthy()
+  })
+
   it("skips a rail whose domain has no listings", async () => {
     renderWithRelay({
       SearchResults: () => ({
