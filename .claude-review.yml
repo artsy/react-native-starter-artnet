@@ -10,6 +10,20 @@ exclude:
 
 focus_areas:
   - |
+    Schema vs. deployed gateway (HIGH PRIORITY — this has broken us twice):
+    `data/schema.graphql` is a client schema copied from `presentation-main-ui`
+    and does NOT perfectly match the deployed Artnet gateway, so a query can
+    type-check and pass Relay compilation yet fail at runtime. Be skeptical of:
+      - root fields / field names that may not exist on the live gateway
+        (e.g. it is `getCurrentUser`, not `currentUser`);
+      - filter/enum *string* values passed to `[String!]` inputs like
+        `EnumFilter_Input.keys` — the schema accepts any string, but the gateway
+        rejects unknown keys with `INVALID_ARGUMENT` (e.g. `listingDomain` wants
+        the PascalCase `ArtnetAuction`/`Gallery`, not the enum's `ARTNET_AUCTION`).
+    When a new/changed query isn't obviously mirrored from a proven
+    `presentation-main-ui` query, call it out and ask how it was verified against
+    a real gateway.
+  - |
     Relay / GraphQL: fragments must be co-located with the component that uses
     them; queries load through `useSystemQueryLoader` (never `useLazyLoadQuery`
     directly) and the environment through `useSystemRelayEnvironment` (never
@@ -18,22 +32,39 @@ focus_areas:
     changes without a matching regenerated artifact (run `yarn relay`).
   - |
     Auth / session security: the app authenticates against the Artnet gateway
-    with an SSO cookie (`gatewaySession`). Flag the session cookie being logged,
-    persisted somewhere world-readable, or leaked into analytics/Sentry, and
-    flag changes that leave the login/logout WebView flow broken or bypassable.
+    with an SSO cookie (`gatewaySession`) shared with WebViews via the native
+    cookie jar. Flag the session cookie being logged, persisted somewhere
+    world-readable, or leaked into analytics/Sentry, and flag changes that leave
+    the login/logout WebView flow broken or bypassable.
+  - |
+    WebView & navigation: in-app WebViews (SSO, News articles) must keep
+    navigation in react-navigation — intercept link taps in
+    `onShouldStartLoadWithRequest` and route them through the navigator instead
+    of letting the WebView navigate in place. Flag WebViews that let the user
+    wander off the intended page/host, or that don't reuse the shared cookie
+    session where they should.
   - |
     easy-peasy store: read state via `GlobalStore.useAppState` and dispatch via
     `GlobalStore.actions`. Any change to a store Model's shape MUST bump
     `STORE_VERSION` in `src/store/GlobalStore.tsx` (add a migration where the
     persisted shape needs upgrading) — flag a shape change without a bump.
   - |
+    Testing: new components, hooks, and helpers should ship co-located tests
+    (`ComponentName.tests.tsx` / `util.test.ts`) — `setupTestWrapper` +
+    `renderWithRelay` for Relay components, `renderWithWrappers` otherwise; query
+    the way a user would (`getByText`/`findByText`). A component that suspends
+    (e.g. via `useSystemQueryLoader`) must be asserted with async `findBy*`, not
+    sync `getBy*`. Flag committed `fdescribe`/`describe.only`/`fit`/`it.only`,
+    and non-trivial new logic that ships with no test.
+  - |
     Conventions: strict TypeScript, avoid `any`; use `@artsy/palette-mobile`
     primitives instead of re-implementing them; absolute imports from `src/`;
     do not import across Scenes (extract shared code to `components/`/`helpers/`);
-    log via `system/logger`, not `console.*`.
+    log via `system/logger`, not `console.*`; Luxon (never moment) for date/time.
   - |
     Feature flags: gate work behind `useFeatureFlag` / `useFeatureVariant`, never
-    Unleash's `useFlag` / `useVariant` directly.
+    Unleash's `useFlag` / `useVariant` directly. New flags start
+    `readyForRelease: false`.
   - |
     Accessibility: interactive elements need `accessibilityRole` and
     `accessibilityLabel` (and a hint where useful); no nested touchables.
