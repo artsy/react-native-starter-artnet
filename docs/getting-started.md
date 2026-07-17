@@ -15,10 +15,11 @@ This repo is a **GitHub template**. To kickstart your own app:
 2. **Rebrand** — in `app.json`, set your app `name`, `slug`, iOS
    `bundleIdentifier`, Android `package`, and icons/splash. Never hand-edit the
    generated native folders — they're regenerated on every prebuild.
-3. **Point at your backend** — the template wires Relay to Artsy's GraphQL
-   (metaphysics). Swap `data/schema.graphql` for your own API (update the URL in
-   the `sync-schema` script, then `yarn sync-schema`) and replace the sample
-   `Login`/example screens under `src/Scenes/`.
+3. **Point at your backend** — the template wires Relay to the **Artnet GraphQL
+   gateway** (see [Artnet Backend](/artnet-backend)). Swap `data/schema.graphql`
+   for your own API (update the URL in the `sync-schema` script, then
+   `yarn sync-schema`) and replace the sample `Login`/example screens under
+   `src/Scenes/`.
 4. Then follow **Install → Configure keys → Generate the native projects → Run**
    below.
 
@@ -183,7 +184,7 @@ yarn test           # Jest
 yarn type-check     # Relay compile + tsc
 yarn lint           # ESLint (auto-fix + auto-sort imports)
 yarn relay          # Compile Relay artifacts
-yarn sync-schema    # Refresh data/schema.graphql from Metaphysics
+yarn sync-schema    # Refresh data/schema.graphql from the Artnet gateway
 yarn e2e            # Run recorded agent-device e2e checks (e2e/flows)
 yarn e2e:doctor     # Verify the agent-device environment
 yarn e2e:impact     # Sniffler: which e2e flows a diff affects
