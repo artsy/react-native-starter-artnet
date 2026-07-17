@@ -85,10 +85,3 @@ export const GlobalStoreProvider: FC<PropsWithChildren> = ({ children }) => {
 export function unsafe__getEnvironment() {
   return { ...globalStoreInstance.getState().config.environment }
 }
-
-/**
- * This is marked as unsafe because it will not cause a re-render
- */
-export function unsafe__getAuth() {
-  return { ...globalStoreInstance.getState().auth }
-}

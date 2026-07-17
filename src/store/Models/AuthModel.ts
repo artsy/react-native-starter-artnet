@@ -21,10 +21,7 @@ const authModelInitialState: AuthModelState = {
 
 export interface AuthModel extends AuthModelState {
   setState: Action<this, Partial<AuthModelState>>
-  setSignedIn: Action<
-    this,
-    { userID?: string | null; email?: string | null } | void
-  >
+  setSignedIn: Action<this>
   signOut: Thunk<this, void, {}, GlobalStoreModel>
 }
 
@@ -36,15 +33,9 @@ export const AuthModel: AuthModel = {
   }),
 
   // Flips the nav guard into the signed-in group after the SSO WebView returns
-  // to the Artnet site. Optionally records user fields if we have them.
-  setSignedIn: action((state, payload) => {
+  // to the Artnet site.
+  setSignedIn: action((state) => {
     state.isSignedIn = true
-    if (payload && payload.userID !== undefined) {
-      state.userID = payload.userID
-    }
-    if (payload && payload.email !== undefined) {
-      state.email = payload.email
-    }
   }),
 
   // Local sign-out: drop back to the signed-out group. The gateway session is
