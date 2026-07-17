@@ -6,31 +6,57 @@ import { HomeArtworkRailsQuery } from "__generated__/HomeArtworkRailsQuery.graph
 import { ArtworkRail } from "Scenes/Home/ArtworkRail"
 import { useSystemQueryLoader } from "system/relay/useSystemQueryLoader"
 
-// Max cards per rail (a rail is a short horizontal scroll, not the full page).
-const RAIL_SIZE = 10
-
 /**
- * A few read-only artwork rails for the Home screen. We fetch ONE unfiltered
- * page of public listings (`getPublicArtworkListings`, no auth/subscription
- * needed — `subscriptionId` is intentionally empty, mirroring the web client)
- * and split it into rails client-side by each listing's `listingDomain`.
+ * A few read-only artwork rails for the Home screen — one public-listings query
+ * per rail (`getPublicArtworkListings`, no auth/subscription needed;
+ * `subscriptionId` is intentionally empty, mirroring the web client).
  *
- * Why not a server-side `listingDomain` filter (one query per rail)? The public
- * endpoint rejects that filter criterion outright (`INVALID_ARGUMENT: The
- * filter criterion for 'ListingDomain' is invalid`) regardless of the key value
- * — the web client only appears to filter because it runs against a mock
- * backend. Partitioning the returned rows avoids the invalid-filter error and
- * costs a single request. Rails with no matching rows are skipped.
+ * The gateway REQUIRES a `listingDomain` filter — an unfiltered call fails with
+ * `INVALID_ARGUMENT: The filter criterion for 'ListingDomain' is invalid`. The
+ * keys are the gateway's PascalCase domain values (`ArtnetAuction`, `Gallery`,
+ * `PdbTeaser`), not the client schema's SCREAMING_SNAKE enum names. "On Artnet"
+ * spans all public domains; the other rails narrow to one each. Rails with no
+ * results are skipped.
  */
 export const HomeArtworkRails = () => {
   const data = useSystemQueryLoader<HomeArtworkRailsQuery>(
     graphql`
       query HomeArtworkRailsQuery {
-        getPublicArtworkListings(
-          input: { subscriptionId: "", page: 1, pageSize: 40 }
+        marketplace: getPublicArtworkListings(
+          input: {
+            subscriptionId: ""
+            page: 1
+            pageSize: 10
+            filters: {
+              listingDomain: { keys: ["PdbTeaser", "Gallery", "ArtnetAuction"] }
+            }
+          }
         ) {
           results {
-            listingDomain
+            ...ArtworkRail_listing
+          }
+        }
+        auctions: getPublicArtworkListings(
+          input: {
+            subscriptionId: ""
+            page: 1
+            pageSize: 10
+            filters: { listingDomain: { keys: ["ArtnetAuction"] } }
+          }
+        ) {
+          results {
+            ...ArtworkRail_listing
+          }
+        }
+        galleries: getPublicArtworkListings(
+          input: {
+            subscriptionId: ""
+            page: 1
+            pageSize: 10
+            filters: { listingDomain: { keys: ["Gallery"] } }
+          }
+        ) {
+          results {
             ...ArtworkRail_listing
           }
         }
@@ -39,30 +65,11 @@ export const HomeArtworkRails = () => {
     {}
   )
 
-  const listings = data.getPublicArtworkListings.results
-
-  // The deployed gateway emits `listingDomain` in PascalCase (`ArtnetAuction`,
-  // `Gallery`) even though the client schema declares the enum in
-  // SCREAMING_SNAKE — so the generated union doesn't contain the real values.
-  // Compare as a string to match what actually comes back over the wire.
-  const isDomain = (listing: (typeof listings)[number], domain: string) =>
-    (listing.listingDomain as string) === domain
-
-  // Cap each rail to keep the horizontal scroll short — we fetch a larger page
-  // (40) only so the domain partitions have enough rows to draw from.
   const rails = [
-    { title: "On Artnet", listings },
-    {
-      title: "Auction lots",
-      listings: listings.filter((l) => isDomain(l, "ArtnetAuction")),
-    },
-    {
-      title: "From galleries",
-      listings: listings.filter((l) => isDomain(l, "Gallery")),
-    },
-  ]
-    .map((rail) => ({ ...rail, listings: rail.listings.slice(0, RAIL_SIZE) }))
-    .filter((rail) => rail.listings.length > 0)
+    { title: "On Artnet", listings: data.marketplace.results },
+    { title: "Auction lots", listings: data.auctions.results },
+    { title: "From galleries", listings: data.galleries.results },
+  ].filter((rail) => rail.listings.length > 0)
 
   return (
     <Flex>
