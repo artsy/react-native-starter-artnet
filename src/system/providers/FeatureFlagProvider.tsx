@@ -51,9 +51,12 @@ export const FeatureFlagProvider: FC<PropsWithChildren> = ({ children }) => {
   const config: IConfig = {
     appName: "react-native-starter",
     // Placeholder url/clientKey are harmless when `startClient` is false — no
-    // request is ever made in the unconfigured case.
-    url: UNLEASH_URL ?? "https://unleash.invalid/proxy",
-    clientKey: UNLEASH_CLIENT_KEY ?? "unconfigured",
+    // request is ever made in the unconfigured case. Use `||` (not `??`) so an
+    // empty-string env var (e.g. `EXPO_PUBLIC_UNLEASH_URL=` from .env.example)
+    // still falls back — the Unleash client constructor throws "url is required"
+    // on an empty url.
+    url: UNLEASH_URL || "https://unleash.invalid/proxy",
+    clientKey: UNLEASH_CLIENT_KEY || "unconfigured",
     // Manual refresh only (e.g. when the app returns to the foreground).
     refreshInterval: 0,
     context: {
