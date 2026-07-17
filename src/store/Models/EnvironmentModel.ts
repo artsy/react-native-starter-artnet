@@ -15,30 +15,37 @@ function defineEnvironmentOptions<EnvOptionName extends string>(options: {
 }
 
 export const environmentOptions = defineEnvironmentOptions({
-  gravityURL: {
-    description: "Gravity URL",
+  gatewayURL: {
+    description: "Gateway URL",
     presets: {
-      staging: "https://stagingapi.artsy.net",
-      production: "https://api.artsy.net",
+      staging: "https://gateway.artnet-dev.com",
+      production: "https://gateway.artnet.com",
     },
   },
-  metaphysicsURL: {
-    description: "Metaphysics URL",
+  webURL: {
+    description: "Web URL",
     presets: {
-      staging: "https://metaphysics-staging.artsy.net/v2",
-      production: "https://metaphysics-production.artsy.net/v2",
+      staging: "https://www.artnet-dev.com",
+      production: "https://www.artnet.com",
     },
   },
 })
 
 export type EnvironmentKey = keyof typeof environmentOptions
 
+// Keys derived from the base environment options (e.g. gateway endpoints).
+type DerivedEnvironmentKey = "graphqlURL" | "loginURL" | "logoutURL"
+
+export type EnvironmentStrings = { [k in EnvironmentKey]: string } & {
+  [k in DerivedEnvironmentKey]: string
+}
+
 interface EnvironmentModelState {
   activeEnvironment: Environment
 }
 
 export interface EnvironmentModel extends EnvironmentModelState {
-  strings: Computed<EnvironmentModel, { [k in EnvironmentKey]: string }>
+  strings: Computed<EnvironmentModel, EnvironmentStrings>
 }
 
 export const EnvironmentModel: EnvironmentModel = {
@@ -50,12 +57,16 @@ export const EnvironmentModel: EnvironmentModel = {
   // Reach out to #practice-mobile for more information
   activeEnvironment: "staging",
   strings: computed(({ activeEnvironment }) => {
-    const result: { [k in EnvironmentKey]: string } = {} as any
+    const gatewayURL = environmentOptions.gatewayURL.presets[activeEnvironment]
+    const webURL = environmentOptions.webURL.presets[activeEnvironment]
 
-    for (const [key, val] of Object.entries(environmentOptions)) {
-      result[key as EnvironmentKey] = val.presets[activeEnvironment]
+    // Derive the gateway endpoints from the resolved gateway URL.
+    return {
+      gatewayURL,
+      webURL,
+      graphqlURL: gatewayURL + "/graphql",
+      loginURL: gatewayURL + "/login",
+      logoutURL: gatewayURL + "/logout",
     }
-
-    return result
   }),
 }

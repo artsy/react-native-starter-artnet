@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<40eb3b8f72956e840f31a08a62bd0a58>>
+ * @generated SignedSource<<2d0a013f1d0ab5427346d86b1387dbfe>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,8 +12,8 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type HomeUserTestQuery$variables = Record<PropertyKey, never>;
 export type HomeUserTestQuery$data = {
-  readonly me: {
-    readonly " $fragmentSpreads": FragmentRefs<"HomeUser_me">;
+  readonly currentUser: {
+    readonly " $fragmentSpreads": FragmentRefs<"HomeUser_currentUser">;
   } | null | undefined;
 };
 export type HomeUserTestQuery = {
@@ -24,7 +24,7 @@ export type HomeUserTestQuery = {
 const node: ConcreteRequest = (function(){
 var v0 = {
   "enumValues": null,
-  "nullable": true,
+  "nullable": false,
   "plural": false,
   "type": "String"
 };
@@ -38,15 +38,15 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Me",
+        "concreteType": "User",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "currentUser",
         "plural": false,
         "selections": [
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "HomeUser_me"
+            "name": "HomeUser_currentUser"
           }
         ],
         "storageKey": null
@@ -64,30 +64,30 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Me",
+        "concreteType": "User",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "currentUser",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "email",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
             "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "displayName",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "email",
             "storageKey": null
           }
         ],
@@ -96,33 +96,33 @@ return {
     ]
   },
   "params": {
-    "cacheID": "20368938ba971276ecffb12236326ea1",
+    "cacheID": "fe44d073b9f5b3a777ab9633320a8144",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
-        "me": {
+        "currentUser": {
           "enumValues": null,
           "nullable": true,
           "plural": false,
-          "type": "Me"
+          "type": "User"
         },
-        "me.email": (v0/*: any*/),
-        "me.id": {
+        "currentUser.displayName": (v0/*: any*/),
+        "currentUser.email": (v0/*: any*/),
+        "currentUser.id": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
           "type": "ID"
-        },
-        "me.name": (v0/*: any*/)
+        }
       }
     },
     "name": "HomeUserTestQuery",
     "operationKind": "query",
-    "text": "query HomeUserTestQuery {\n  me {\n    ...HomeUser_me\n    id\n  }\n}\n\nfragment HomeUser_me on Me {\n  email\n  name\n}\n"
+    "text": "query HomeUserTestQuery {\n  currentUser {\n    ...HomeUser_currentUser\n    id\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d8e81df99a5f66cb2c17d15d568c5caa";
+(node as any).hash = "eaad3c68eaa33a5218d8951cd146a5e8";
 
 export default node;

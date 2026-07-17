@@ -10,21 +10,21 @@ export const HomeScreen = () => {
   const data = useSystemQueryLoader<HomeQuery>(
     graphql`
       query HomeQuery {
-        me {
-          ...HomeUser_me
+        currentUser {
+          ...HomeUser_currentUser
         }
       }
     `,
     {}
   )
 
-  if (!data?.me) {
+  if (!data?.currentUser) {
     return <Text>Query Failed</Text>
   }
 
   return (
     <Flex flex={1} justifyContent="center" alignItems="center">
-      <HomeUser me={data.me} />
+      <HomeUser currentUser={data.currentUser} />
       <Button
         onPress={() => {
           GlobalStore.actions.auth.signOut()

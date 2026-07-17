@@ -7,8 +7,8 @@ import {
 } from "react-relay-network-modern"
 import { Environment, RecordSource, Store } from "relay-runtime"
 
+import { artnetUrlMiddleware } from "relay/middlewares/artnetUrlMiddleware"
 import { authMiddleware } from "relay/middlewares/authMiddleware"
-import { metaphysicsUrlMiddleware } from "relay/middlewares/metaphysicsUrlMiddleware"
 
 const network = new RelayNetworkLayer(
   [
@@ -17,7 +17,7 @@ const network = new RelayNetworkLayer(
       size: 100, // max 100 requests
       ttl: 900000, // 15 minutes
     }),
-    metaphysicsUrlMiddleware(),
+    artnetUrlMiddleware(),
     __DEV__ ? loggerMiddleware() : null,
     __DEV__ ? errorMiddleware() : null,
     __DEV__ ? perfMiddleware() : null,

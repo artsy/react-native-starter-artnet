@@ -50,6 +50,19 @@ jest.mock("react-native-device-info", () => ({
 // Native-backed component: render as a plain host view in tests.
 jest.mock("react-native-linear-gradient", () => "LinearGradient")
 
+// Native WebView: render as a plain host view in tests.
+jest.mock("react-native-webview", () => ({ WebView: "WebView" }))
+
+// Native cookie jar: stub the CookieManager methods used by the auth flow.
+jest.mock("@react-native-cookies/cookies", () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(async () => ({})),
+    clearAll: jest.fn(async () => true),
+    set: jest.fn(async () => true),
+  },
+}))
+
 // Native module: no-op haptics in tests.
 jest.mock("react-native-haptic-feedback", () => ({
   __esModule: true,

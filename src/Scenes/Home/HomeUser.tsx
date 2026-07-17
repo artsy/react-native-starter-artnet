@@ -1,30 +1,31 @@
 import { Flex, Text } from "@artsy/palette-mobile"
 import { graphql, useFragment } from "react-relay"
 
-import { HomeUser_me$key } from "__generated__/HomeUser_me.graphql"
+import { HomeUser_currentUser$key } from "__generated__/HomeUser_currentUser.graphql"
 
 interface HomeUserProps {
-  me: HomeUser_me$key
+  currentUser: HomeUser_currentUser$key
 }
 
 const HomeUserFragment = graphql`
-  fragment HomeUser_me on Me {
+  fragment HomeUser_currentUser on User {
+    id
+    displayName
     email
-    name
   }
 `
 
 export const HomeUser: React.FC<HomeUserProps> = (props) => {
-  const me = useFragment(HomeUserFragment, props.me)
+  const currentUser = useFragment(HomeUserFragment, props.currentUser)
 
-  if (!me) {
+  if (!currentUser) {
     return <Text>Failed to make query</Text>
   }
 
   return (
     <Flex>
-      <Text>{me.email}</Text>
-      <Text>{me.name}</Text>
+      <Text>{currentUser.displayName}</Text>
+      <Text>{currentUser.email}</Text>
     </Flex>
   )
 }
