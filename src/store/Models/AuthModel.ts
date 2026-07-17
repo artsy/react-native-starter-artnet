@@ -13,8 +13,8 @@ interface AuthModelState {
   // track the signed-in state here, mirroring how the web client relies on the
   // browser's cookie jar rather than reading the httpOnly cookie itself.
   isSignedIn: boolean
-  // Populated from `currentUser` after sign-in (see `hydrateUser`). Used for the
-  // feature-flag targeting context; not required for auth (the cookie is).
+  // Populated from `getCurrentUser` after sign-in (see `hydrateUser`). Used for
+  // the feature-flag targeting context; not required for auth (the cookie is).
   userID: string | null
   email: string | null
 }
@@ -56,20 +56,22 @@ export const AuthModel: AuthModel = {
         defaultEnvironment,
         graphql`
           query AuthModelHydrateUserQuery {
-            currentUser {
-              id
-              email
+            getCurrentUser {
+              user {
+                id
+                email
+              }
             }
           }
         `,
         {}
       ).toPromise()
-      const currentUser = data?.currentUser
+      const user = data?.getCurrentUser?.user
 
-      if (currentUser) {
+      if (user) {
         actions.setState({
-          userID: currentUser.id ?? null,
-          email: currentUser.email ?? null,
+          userID: user.id ?? null,
+          email: user.email ?? null,
         })
       }
     } catch (error) {

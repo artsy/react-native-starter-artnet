@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2d0a013f1d0ab5427346d86b1387dbfe>>
+ * @generated SignedSource<<28880d921eb424c8087da87ed1d8acab>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,9 +12,11 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type HomeUserTestQuery$variables = Record<PropertyKey, never>;
 export type HomeUserTestQuery$data = {
-  readonly currentUser: {
-    readonly " $fragmentSpreads": FragmentRefs<"HomeUser_currentUser">;
-  } | null | undefined;
+  readonly getCurrentUser: {
+    readonly user: {
+      readonly " $fragmentSpreads": FragmentRefs<"HomeUser_currentUser">;
+    } | null | undefined;
+  };
 };
 export type HomeUserTestQuery = {
   response: HomeUserTestQuery$data;
@@ -38,15 +40,26 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "User",
+        "concreteType": "CurrentUserResult",
         "kind": "LinkedField",
-        "name": "currentUser",
+        "name": "getCurrentUser",
         "plural": false,
         "selections": [
           {
+            "alias": null,
             "args": null,
-            "kind": "FragmentSpread",
-            "name": "HomeUser_currentUser"
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "HomeUser_currentUser"
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -64,30 +77,41 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "User",
+        "concreteType": "CurrentUserResult",
         "kind": "LinkedField",
-        "name": "currentUser",
+        "name": "getCurrentUser",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "displayName",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "email",
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "displayName",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "email",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -96,19 +120,25 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fe44d073b9f5b3a777ab9633320a8144",
+    "cacheID": "106bc1858e5b5a70c68c59a9fe3c3bcb",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
-        "currentUser": {
+        "getCurrentUser": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "CurrentUserResult"
+        },
+        "getCurrentUser.user": {
           "enumValues": null,
           "nullable": true,
           "plural": false,
           "type": "User"
         },
-        "currentUser.displayName": (v0/*: any*/),
-        "currentUser.email": (v0/*: any*/),
-        "currentUser.id": {
+        "getCurrentUser.user.displayName": (v0/*: any*/),
+        "getCurrentUser.user.email": (v0/*: any*/),
+        "getCurrentUser.user.id": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
@@ -118,11 +148,11 @@ return {
     },
     "name": "HomeUserTestQuery",
     "operationKind": "query",
-    "text": "query HomeUserTestQuery {\n  currentUser {\n    ...HomeUser_currentUser\n    id\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
+    "text": "query HomeUserTestQuery {\n  getCurrentUser {\n    user {\n      ...HomeUser_currentUser\n      id\n    }\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
   }
 };
 })();
 
-(node as any).hash = "eaad3c68eaa33a5218d8951cd146a5e8";
+(node as any).hash = "69252559d4126ea44493e63caaf966cf";
 
 export default node;

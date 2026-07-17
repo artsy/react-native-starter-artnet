@@ -17,7 +17,7 @@ All GraphQL requests go to the Artnet gateway:
   `EnvironmentModel` store slice) and the Relay network layer posts operations
   to `{gatewayURL}/graphql`.
 
-The gateway exposes the current viewer through `currentUser`:
+The gateway exposes the current viewer through `getCurrentUser`:
 
 ```graphql
 type User {
@@ -26,13 +26,20 @@ type User {
   email: String!
 }
 
+type CurrentUserResult {
+  isLoggedIn: Boolean!
+  isReauthenticationRequired: Boolean!
+  user: User
+}
+
 type Query {
-  currentUser: User
+  getCurrentUser: CurrentUserResult!
 }
 ```
 
 This replaces the old Artsy `me: Me` root field. The Home screen reads
-`currentUser` and renders the signed-in user's `displayName` and `email`.
+`getCurrentUser { user { … } }` and renders the signed-in user's `displayName`
+and `email`.
 
 ## Authentication — SSO cookie
 
@@ -53,7 +60,7 @@ jar** carry the session rather than reading the httpOnly cookie by hand:
   Android's `ForwardingCookieHandler`, so cookies set during sign-in are shared
   with the app's `fetch`. Relay's `authMiddleware` sets `credentials: "include"`,
   so `gatewaySession` is sent automatically on `{gatewayURL}/graphql` requests —
-  the gateway then resolves `currentUser` for the viewer.
+  the gateway then resolves `getCurrentUser` for the viewer.
 
 ### Login
 
@@ -63,7 +70,7 @@ jar** carry the session rather than reading the httpOnly cookie by hand:
 3. Flip the app into the signed-in group via `GlobalStore.actions.auth.setSignedIn()`.
    The session itself lives in the native cookie jar; the store keeps an
    `isSignedIn` flag plus the viewer's `id`/`email`, which `hydrateUser` fetches
-   from `currentUser` (using the shared cookie jar) for the feature-flag
+   from `getCurrentUser` (using the shared cookie jar) for the feature-flag
    targeting context. `hydrateUser` runs on sign-in and on a cold start with a
    persisted session.
 
@@ -97,14 +104,14 @@ non-interactive access to staging (schema sync, tooling, CI).
 ## Relay compatibility
 
 Relay works against the Artnet gateway for the query/fragment use cases this app
-needs (e.g. `currentUser` on Home). This was verified, not assumed:
+needs (e.g. `getCurrentUser` on Home). This was verified, not assumed:
 
 - The Relay compiler accepts the Artnet client schema and compiles the app's
   operations/fragments (`yarn relay`), TypeScript type-checks, and the
   Relay-mocked tests pass.
 - At runtime Relay simply issues standard GraphQL POST requests to
   `{gatewayURL}/graphql`, which the gateway (a spec-compliant Apollo Federation
-  server) serves. `User` exposes a global `id: ID!`, so `currentUser`
+  server) serves. `User` exposes a global `id: ID!`, so `getCurrentUser`
   normalizes cleanly into the Relay store.
 
 **Known limitations** — the gateway schema does **not** currently follow two
@@ -120,7 +127,7 @@ Relay conventions, so Relay's advanced features are not available out of the box
 - Types without a global `id` are not normalized/deduplicated in the store
   (they still fetch fine).
 
-None of these block login/logout or the Home `currentUser` view. If we later need
+None of these block login/logout or the Home `getCurrentUser` view. If we later need
 refetch or cursor pagination, that requires gateway-side schema additions
 (`Node`/connections) or client-side adapters.
 

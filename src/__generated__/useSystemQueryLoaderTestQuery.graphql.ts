@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9ef409aa782c85eb078fd54a0f0ee4bb>>
+ * @generated SignedSource<<1dee952f7728d6145e938cd5564dccca>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,9 +11,11 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type useSystemQueryLoaderTestQuery$variables = Record<PropertyKey, never>;
 export type useSystemQueryLoaderTestQuery$data = {
-  readonly currentUser: {
-    readonly displayName: string;
-  } | null | undefined;
+  readonly getCurrentUser: {
+    readonly user: {
+      readonly displayName: string;
+    } | null | undefined;
+  };
 };
 export type useSystemQueryLoaderTestQuery = {
   response: useSystemQueryLoaderTestQuery$data;
@@ -38,12 +40,23 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "User",
+        "concreteType": "CurrentUserResult",
         "kind": "LinkedField",
-        "name": "currentUser",
+        "name": "getCurrentUser",
         "plural": false,
         "selections": [
-          (v0/*: any*/)
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              (v0/*: any*/)
+            ],
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
@@ -60,17 +73,28 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "User",
+        "concreteType": "CurrentUserResult",
         "kind": "LinkedField",
-        "name": "currentUser",
+        "name": "getCurrentUser",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              (v0/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -79,23 +103,29 @@ return {
     ]
   },
   "params": {
-    "cacheID": "92afcb21490d78cc5d78bcff7c69b8a9",
+    "cacheID": "ed724087ba58e6943134e93985fd5929",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
-        "currentUser": {
+        "getCurrentUser": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "CurrentUserResult"
+        },
+        "getCurrentUser.user": {
           "enumValues": null,
           "nullable": true,
           "plural": false,
           "type": "User"
         },
-        "currentUser.displayName": {
+        "getCurrentUser.user.displayName": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
           "type": "String"
         },
-        "currentUser.id": {
+        "getCurrentUser.user.id": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
@@ -105,11 +135,11 @@ return {
     },
     "name": "useSystemQueryLoaderTestQuery",
     "operationKind": "query",
-    "text": "query useSystemQueryLoaderTestQuery {\n  currentUser {\n    displayName\n    id\n  }\n}\n"
+    "text": "query useSystemQueryLoaderTestQuery {\n  getCurrentUser {\n    user {\n      displayName\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f44923f0d6dd6f0fdc24a6c922494c3b";
+(node as any).hash = "17a6afd0b3bd3d7040bc10e3bbdabb0e";
 
 export default node;

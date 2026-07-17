@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<45b325aba81f9c87585d1ed57649c56f>>
+ * @generated SignedSource<<724560db52be909e4c928f553f24eb8f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,10 +11,12 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type AuthModelHydrateUserQuery$variables = Record<PropertyKey, never>;
 export type AuthModelHydrateUserQuery$data = {
-  readonly currentUser: {
-    readonly email: string;
-    readonly id: string;
-  } | null | undefined;
+  readonly getCurrentUser: {
+    readonly user: {
+      readonly email: string;
+      readonly id: string;
+    } | null | undefined;
+  };
 };
 export type AuthModelHydrateUserQuery = {
   response: AuthModelHydrateUserQuery$data;
@@ -26,23 +28,34 @@ var v0 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "User",
+    "concreteType": "CurrentUserResult",
     "kind": "LinkedField",
-    "name": "currentUser",
+    "name": "getCurrentUser",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "email",
+        "concreteType": "User",
+        "kind": "LinkedField",
+        "name": "user",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "email",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -67,16 +80,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "6a8edd0f3c86c3de9a327766790511b4",
+    "cacheID": "59d65034ccf5a70c66aa31b4319693f4",
     "id": null,
     "metadata": {},
     "name": "AuthModelHydrateUserQuery",
     "operationKind": "query",
-    "text": "query AuthModelHydrateUserQuery {\n  currentUser {\n    id\n    email\n  }\n}\n"
+    "text": "query AuthModelHydrateUserQuery {\n  getCurrentUser {\n    user {\n      id\n      email\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "26a544ebaae8a8605b04b7ce62196e45";
+(node as any).hash = "fe78c9d6436820b674984e078eea9659";
 
 export default node;

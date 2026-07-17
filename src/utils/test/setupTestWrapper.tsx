@@ -39,8 +39,10 @@ interface SetupTestWrapper<T extends OperationType> {
  *   Component: HomeUser,
  *   query: graphql`
  *     query HomeUserTestQuery @relay_test_operation {
- *       currentUser {
- *         ...HomeUser_currentUser
+ *       getCurrentUser {
+ *         user {
+ *           ...HomeUser_currentUser
+ *         }
  *       }
  *     }
  *   `,

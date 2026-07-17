@@ -10,15 +10,17 @@ const TestComponent = () => {
   const data = useSystemQueryLoader<useSystemQueryLoaderTestQuery>(
     graphql`
       query useSystemQueryLoaderTestQuery @relay_test_operation {
-        currentUser {
-          displayName
+        getCurrentUser {
+          user {
+            displayName
+          }
         }
       }
     `,
     {}
   )
 
-  return <Text>{data.currentUser?.displayName}</Text>
+  return <Text>{data.getCurrentUser?.user?.displayName}</Text>
 }
 
 const { renderWithRelay } = setupTestWrapper({ Component: TestComponent })

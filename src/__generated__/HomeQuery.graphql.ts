@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bb7204a0f7df4a30cfaf3f6e3b97167e>>
+ * @generated SignedSource<<7ce106ceef5ebe36704333d1d2294d20>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,9 +12,11 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type HomeQuery$variables = Record<PropertyKey, never>;
 export type HomeQuery$data = {
-  readonly currentUser: {
-    readonly " $fragmentSpreads": FragmentRefs<"HomeUser_currentUser">;
-  } | null | undefined;
+  readonly getCurrentUser: {
+    readonly user: {
+      readonly " $fragmentSpreads": FragmentRefs<"HomeUser_currentUser">;
+    } | null | undefined;
+  };
 };
 export type HomeQuery = {
   response: HomeQuery$data;
@@ -31,15 +33,26 @@ const node: ConcreteRequest = {
       {
         "alias": null,
         "args": null,
-        "concreteType": "User",
+        "concreteType": "CurrentUserResult",
         "kind": "LinkedField",
-        "name": "currentUser",
+        "name": "getCurrentUser",
         "plural": false,
         "selections": [
           {
+            "alias": null,
             "args": null,
-            "kind": "FragmentSpread",
-            "name": "HomeUser_currentUser"
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "HomeUser_currentUser"
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -57,30 +70,41 @@ const node: ConcreteRequest = {
       {
         "alias": null,
         "args": null,
-        "concreteType": "User",
+        "concreteType": "CurrentUserResult",
         "kind": "LinkedField",
-        "name": "currentUser",
+        "name": "getCurrentUser",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "displayName",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "email",
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "displayName",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "email",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -89,15 +113,15 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "d0f776c5be00d5bbeb8c497799d21ece",
+    "cacheID": "0495c5877ca91620675f81094fc583c0",
     "id": null,
     "metadata": {},
     "name": "HomeQuery",
     "operationKind": "query",
-    "text": "query HomeQuery {\n  currentUser {\n    ...HomeUser_currentUser\n    id\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
+    "text": "query HomeQuery {\n  getCurrentUser {\n    user {\n      ...HomeUser_currentUser\n      id\n    }\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
   }
 };
 
-(node as any).hash = "917d6eb43f4bc75c6e19c6f1c8296f3f";
+(node as any).hash = "de3b942457e1dade637667a7459c84d7";
 
 export default node;
