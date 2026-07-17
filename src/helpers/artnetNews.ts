@@ -28,10 +28,3 @@ export const newsArticleId = (url: string): string | null => {
 
   return isNewsHost && idMatch ? idMatch[1] : null
 }
-
-/**
- * Recognizes an Artnet **news article** URL, so the news WebView can intercept
- * article-to-article link taps and open them as new native screens.
- */
-export const isNewsArticleUrl = (url: string): boolean =>
-  newsArticleId(url) !== null
