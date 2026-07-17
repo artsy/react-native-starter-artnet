@@ -1,17 +1,21 @@
 /**
- * Recognizes an Artnet **news article** URL, so the news WebView can intercept
- * article-to-article link taps and open them as new native screens.
+ * Extracts the numeric **article id** from an Artnet news article URL, or
+ * returns `null` if the URL isn't a news article.
  *
  * News lives on the news subdomain (`news.artnet.com` in prod, `<env>-news.
  * artnet-dev.com` on staging). An individual article path ends in `-<digits>`
  * (the article id), e.g. `/art-world/andy-warhol-...-446897`; category/author/
- * search pages (`/art-world`, `/author/...`, `/search/...`) do not — those are
- * left to load in place.
+ * search pages (`/art-world`, `/author/...`, `/search/...`) do not.
+ *
+ * The id is the article's canonical identity: two URLs with the same id are the
+ * same article even if they differ by trailing slash, query string, `#anchor`,
+ * or scheme/host canonicalization — which is what callers compare on rather
+ * than raw URL equality.
  */
-export const isNewsArticleUrl = (url: string): boolean => {
+export const newsArticleId = (url: string): string | null => {
   const match = /^[a-z]+:\/\/([^/?#]+)([^?#]*)/i.exec(url)
   if (!match) {
-    return false
+    return null
   }
   const host = match[1].split(":")[0].toLowerCase()
   const path = match[2] || ""
@@ -20,7 +24,14 @@ export const isNewsArticleUrl = (url: string): boolean => {
   // env-prefix hyphen (`qa1-news.artnet-dev.com`) — so `notnews.artnet.com`
   // isn't treated as a news host.
   const isNewsHost = /(^|[.-])news\.artnet(-dev)?\.com$/.test(host)
-  const isArticlePath = /-\d+\/?$/.test(path)
+  const idMatch = /-(\d+)\/?$/.exec(path)
 
-  return isNewsHost && isArticlePath
+  return isNewsHost && idMatch ? idMatch[1] : null
 }
+
+/**
+ * Recognizes an Artnet **news article** URL, so the news WebView can intercept
+ * article-to-article link taps and open them as new native screens.
+ */
+export const isNewsArticleUrl = (url: string): boolean =>
+  newsArticleId(url) !== null

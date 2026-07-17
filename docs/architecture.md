@@ -43,6 +43,20 @@ Navigation uses **react-navigation v7's static API**, defined in
 
 Screens live under `src/Scenes/` (one folder per top-level screen).
 
+### WebView-backed screens (News)
+
+The **News** tab is a nested native-stack (`NewsFeed` → `NewsArticle`) used as a
+tab's `screen`. Articles render in a `react-native-webview`, but navigation
+stays in react-navigation: `NewsArticle`'s `onShouldStartLoadWithRequest`
+intercepts in-WebView link taps and, for a tap on a *different* article, calls
+`navigation.push("NewsArticle", …)` and returns `false` to block the in-WebView
+load — so the stack's back button walks the reading history. "Same vs.
+different article" is compared on the article **id** (`newsArticleId`), not raw
+URL equality, so canonicalizing redirects and `#anchor` links load in place
+rather than pushing a duplicate screen. Non-article links (category/author/
+search) load in place. This is the pattern to reuse for any future
+WebView-backed feature that should keep native navigation.
+
 ## State management
 
 Global state uses **easy-peasy**, configured in `src/store/GlobalStore.tsx`:

@@ -1,4 +1,4 @@
-import { isNewsArticleUrl } from "helpers/artnetNews"
+import { isNewsArticleUrl, newsArticleId } from "helpers/artnetNews"
 
 describe("isNewsArticleUrl", () => {
   it("matches article URLs (news host + trailing -<id>)", () => {
@@ -36,5 +36,28 @@ describe("isNewsArticleUrl", () => {
       false
     )
     expect(isNewsArticleUrl("not a url")).toBe(false)
+  })
+})
+
+describe("newsArticleId", () => {
+  it("extracts the trailing numeric id, ignoring slash/query/fragment", () => {
+    expect(
+      newsArticleId("https://news.artnet.com/art-world/a-story-335092")
+    ).toBe("335092")
+    expect(
+      newsArticleId("https://news.artnet.com/art-world/a-story-335092/")
+    ).toBe("335092")
+    expect(
+      newsArticleId("https://news.artnet.com/art-world/a-story-335092?utm=x")
+    ).toBe("335092")
+    expect(
+      newsArticleId("https://news.artnet.com/art-world/a-story-335092#comments")
+    ).toBe("335092")
+  })
+
+  it("returns null for non-article and non-news URLs", () => {
+    expect(newsArticleId("https://news.artnet.com/art-world")).toBeNull()
+    expect(newsArticleId("https://www.artnet.com/artists/foo-12345")).toBeNull()
+    expect(newsArticleId("not a url")).toBeNull()
   })
 })

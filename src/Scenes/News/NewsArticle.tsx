@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native"
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { WebView } from "react-native-webview"
 
-import { isNewsArticleUrl } from "helpers/artnetNews"
+import { newsArticleId } from "helpers/artnetNews"
 import { NewsStackParamList } from "Scenes/News/types"
 
 type Props = StaticScreenProps<NewsStackParamList["NewsArticle"]>
@@ -12,25 +12,37 @@ type Props = StaticScreenProps<NewsStackParamList["NewsArticle"]>
 /**
  * Decides what the article WebView does with a navigation request, keeping
  * navigation in react-navigation: the screen's own article loads in place, a
- * tap on ANOTHER article is intercepted (`onOpenArticle` pushes a new screen,
- * returns `false` to block the in-WebView load), and everything else
+ * tap on a DIFFERENT article is intercepted (`onOpenArticle` pushes a new
+ * screen, returns `false` to block the in-WebView load), and everything else
  * (category/author/search) loads in place. Extracted as a pure function so the
  * interception logic is testable without mounting the WebView.
+ *
+ * "Same article" is compared on the article id, not raw URL equality: a
+ * canonicalizing redirect (trailing slash, dropped tracking params, http→https)
+ * or an in-page `#anchor` yields a URL variant that must still load in place —
+ * otherwise it would be misread as a different article, pushing a duplicate
+ * screen and cancelling the current load (leaving it stuck on the spinner).
  */
 export const makeArticleLinkInterceptor =
   (currentUrl: string, onOpenArticle: (url: string) => void) =>
   (request: { url: string }): boolean => {
-    // Always allow this screen's own article to load.
+    // Fast path: the exact same URL always loads in place.
     if (request.url === currentUrl) {
       return true
     }
-    // Intercept taps on other articles → push a new native screen.
-    if (isNewsArticleUrl(request.url)) {
-      onOpenArticle(request.url)
-      return false
+
+    const requestId = newsArticleId(request.url)
+    // Not an article (category/author/search, or off-site) → load in place.
+    if (requestId === null) {
+      return true
     }
-    // Category/author/search and other links load in place.
-    return true
+    // A variant of THIS article (same id) → load in place.
+    if (requestId === newsArticleId(currentUrl)) {
+      return true
+    }
+    // A different article → push a new native screen, block in-WebView nav.
+    onOpenArticle(request.url)
+    return false
   }
 
 /**

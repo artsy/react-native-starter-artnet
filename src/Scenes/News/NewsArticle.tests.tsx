@@ -20,6 +20,18 @@ describe("makeArticleLinkInterceptor", () => {
     expect(onOpenArticle).toHaveBeenCalledWith(otherArticle)
   })
 
+  it("loads variants of the same article (redirect / query / #anchor) in place", () => {
+    const onOpenArticle = jest.fn()
+    const shouldLoad = makeArticleLinkInterceptor(currentUrl, onOpenArticle)
+
+    // same article id 111, differing by trailing slash, tracking query, and
+    // an in-page anchor — must NOT be treated as a different article.
+    expect(shouldLoad({ url: `${currentUrl}/` })).toBe(true)
+    expect(shouldLoad({ url: `${currentUrl}?utm_source=x` })).toBe(true)
+    expect(shouldLoad({ url: `${currentUrl}#comments` })).toBe(true)
+    expect(onOpenArticle).not.toHaveBeenCalled()
+  })
+
   it("lets non-article links (category/author/search) load in place", () => {
     const onOpenArticle = jest.fn()
     const shouldLoad = makeArticleLinkInterceptor(currentUrl, onOpenArticle)
