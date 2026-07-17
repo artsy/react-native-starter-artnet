@@ -3137,7 +3137,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-cookies/cookies@npm:^6.2.1":
+"@react-native-cookies/cookies@npm:6.2.1":
   version: 6.2.1
   resolution: "@react-native-cookies/cookies@npm:6.2.1"
   dependencies:
@@ -3145,6 +3145,17 @@ __metadata:
   peerDependencies:
     react-native: ">= 0.60.2"
   checksum: 10c0/7f3b6dcd966326587196d674491275ae52c574ae46c765981327c541336de58963d33e4fcdc5a55d4041f9b0b520840db4c79d880a43464728a115e2dff39ffa
+  languageName: node
+  linkType: hard
+
+"@react-native-cookies/cookies@patch:@react-native-cookies/cookies@npm%3A6.2.1#~/.yarn/patches/@react-native-cookies-cookies-npm-6.2.1-13b1e04ec5.patch":
+  version: 6.2.1
+  resolution: "@react-native-cookies/cookies@patch:@react-native-cookies/cookies@npm%3A6.2.1#~/.yarn/patches/@react-native-cookies-cookies-npm-6.2.1-13b1e04ec5.patch::version=6.2.1&hash=20d3d4"
+  dependencies:
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    react-native: ">= 0.60.2"
+  checksum: 10c0/77d1dd68945ed4fee4269c29205ca87447f685f21cb9e3435054f3bb1364e5f49903ee99c16d80a44b09b51303ecdd1a410d03952df1d12b8e3564d388471b98
   languageName: node
   linkType: hard
 
@@ -12611,7 +12622,7 @@ __metadata:
     "@d11/react-native-fast-image": "npm:8.13.0"
     "@jest/globals": "npm:^29.4.3"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
-    "@react-native-cookies/cookies": "npm:^6.2.1"
+    "@react-native-cookies/cookies": "patch:@react-native-cookies/cookies@npm%3A6.2.1#~/.yarn/patches/@react-native-cookies-cookies-npm-6.2.1-13b1e04ec5.patch"
     "@react-native/jest-preset": "npm:0.85.3"
     "@react-navigation/bottom-tabs": "npm:7.18.8"
     "@react-navigation/native": "npm:7.3.8"
