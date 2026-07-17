@@ -11,7 +11,6 @@ const HomeUserFragment = graphql`
   fragment HomeUser_currentUser on User {
     id
     displayName
-    email
   }
 `
 
@@ -25,7 +24,6 @@ export const HomeUser: React.FC<HomeUserProps> = (props) => {
   return (
     <Flex>
       <Text>{currentUser.displayName}</Text>
-      <Text>{currentUser.email}</Text>
     </Flex>
   )
 }

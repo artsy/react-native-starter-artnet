@@ -1,5 +1,6 @@
 import { Button, Flex, Spacer, Spinner, Text } from "@artsy/palette-mobile"
 import { ArtnetAuthWebView } from "components/ArtnetAuthWebView"
+import { ArtnetLogo } from "components/ArtnetLogo"
 import { Suspense,useState } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 import { ScrollView } from "react-native"
@@ -35,7 +36,9 @@ export const HomeScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={{ paddingVertical: 24 }}>
-      <Flex px={2} alignItems="center">
+      <Flex px={2}>
+        <ArtnetLogo />
+        <Spacer y={1} />
         <HomeUser currentUser={user} />
       </Flex>
 

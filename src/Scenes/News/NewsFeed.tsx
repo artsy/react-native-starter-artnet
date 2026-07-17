@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native"
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { FlashList } from "@shopify/flash-list"
 import { Suspense } from "react"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { graphql } from "react-relay"
 
 import { NewsFeedCreatorsQuery } from "__generated__/NewsFeedCreatorsQuery.graphql"
@@ -110,6 +111,7 @@ const NewsFeed = () => {
 const CreatorNewsFeed = ({ creatorIds }: { creatorIds: string[] }) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<NewsStackParamList>>()
+  const insets = useSafeAreaInsets()
 
   const data = useSystemQueryLoader<NewsFeedQuery>(
     graphql`
@@ -148,7 +150,13 @@ const CreatorNewsFeed = ({ creatorIds }: { creatorIds: string[] }) => {
       <FlashList
         data={articles}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16 }}
+        // Pad the top by the safe-area inset so the first items start below the
+        // status bar (there's no nav header). Content still scrolls behind it.
+        contentContainerStyle={{
+          paddingTop: insets.top + 16,
+          paddingBottom: 16,
+          paddingHorizontal: 16,
+        }}
         ItemSeparatorComponent={() => (
           <>
             <Spacer y={1} />
