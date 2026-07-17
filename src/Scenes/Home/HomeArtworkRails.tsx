@@ -1,4 +1,5 @@
 import { Flex, Spacer } from "@artsy/palette-mobile"
+import { Fragment } from "react"
 import { graphql } from "react-relay"
 
 import { HomeArtworkRailsQuery } from "__generated__/HomeArtworkRailsQuery.graphql"
@@ -6,50 +7,27 @@ import { ArtworkRail } from "Scenes/Home/ArtworkRail"
 import { useSystemQueryLoader } from "system/relay/useSystemQueryLoader"
 
 /**
- * A few read-only artwork rails for the Home screen. Each rail is the same
- * public listings query (`getPublicArtworkListings`, no auth/subscription
+ * A few read-only artwork rails for the Home screen. We fetch ONE unfiltered
+ * page of public listings (`getPublicArtworkListings`, no auth/subscription
  * needed — `subscriptionId` is intentionally empty, mirroring the web client)
- * sliced with a different static `listingDomain` filter.
+ * and split it into rails client-side by each listing's `listingDomain`.
  *
- * The `listingDomain` keys are the gateway's PascalCase enum *string* values
- * (`ArtnetAuction`, `Gallery`) — not the SCREAMING_SNAKE names from the client
- * schema's `ListingDomain` enum. The filter field is a plain `[String!]`, so
- * the schema accepts any string, but the gateway rejects unknown keys with
- * `INVALID_ARGUMENT: The filter criterion for 'ListingDomain' is invalid.`
- * These match `presentation-main-ui`'s public-listings query.
+ * Why not a server-side `listingDomain` filter (one query per rail)? The public
+ * endpoint rejects that filter criterion outright (`INVALID_ARGUMENT: The
+ * filter criterion for 'ListingDomain' is invalid`) regardless of the key value
+ * — the web client only appears to filter because it runs against a mock
+ * backend. Partitioning the returned rows avoids the invalid-filter error and
+ * costs a single request. Rails with no matching rows are skipped.
  */
 export const HomeArtworkRails = () => {
   const data = useSystemQueryLoader<HomeArtworkRailsQuery>(
     graphql`
       query HomeArtworkRailsQuery {
-        marketplace: getPublicArtworkListings(
-          input: { subscriptionId: "", page: 1, pageSize: 10 }
+        getPublicArtworkListings(
+          input: { subscriptionId: "", page: 1, pageSize: 40 }
         ) {
           results {
-            ...ArtworkRail_listing
-          }
-        }
-        auctions: getPublicArtworkListings(
-          input: {
-            subscriptionId: ""
-            page: 1
-            pageSize: 10
-            filters: { listingDomain: { keys: ["ArtnetAuction"] } }
-          }
-        ) {
-          results {
-            ...ArtworkRail_listing
-          }
-        }
-        galleries: getPublicArtworkListings(
-          input: {
-            subscriptionId: ""
-            page: 1
-            pageSize: 10
-            filters: { listingDomain: { keys: ["Gallery"] } }
-          }
-        ) {
-          results {
+            listingDomain
             ...ArtworkRail_listing
           }
         }
@@ -58,13 +36,28 @@ export const HomeArtworkRails = () => {
     {}
   )
 
+  const listings = data.getPublicArtworkListings.results
+
+  const rails = [
+    { title: "On Artnet", listings },
+    {
+      title: "Auction lots",
+      listings: listings.filter((l) => l.listingDomain === "ARTNET_AUCTION"),
+    },
+    {
+      title: "From galleries",
+      listings: listings.filter((l) => l.listingDomain === "GALLERY"),
+    },
+  ].filter((rail) => rail.listings.length > 0)
+
   return (
     <Flex>
-      <ArtworkRail title="On Artnet" listings={data.marketplace.results} />
-      <Spacer y={2} />
-      <ArtworkRail title="Auction lots" listings={data.auctions.results} />
-      <Spacer y={2} />
-      <ArtworkRail title="From galleries" listings={data.galleries.results} />
+      {rails.map((rail, index) => (
+        <Fragment key={rail.title}>
+          {index > 0 && <Spacer y={2} />}
+          <ArtworkRail title={rail.title} listings={rail.listings} />
+        </Fragment>
+      ))}
     </Flex>
   )
 }
