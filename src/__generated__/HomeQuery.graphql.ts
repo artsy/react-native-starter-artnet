@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4e3b1a9e252880dd488cf069a4966d28>>
+ * @generated SignedSource<<7ce106ceef5ebe36704333d1d2294d20>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,6 @@ import { FragmentRefs } from "relay-runtime";
 export type HomeQuery$variables = Record<PropertyKey, never>;
 export type HomeQuery$data = {
   readonly getCurrentUser: {
-    readonly isLoggedIn: boolean;
     readonly user: {
       readonly " $fragmentSpreads": FragmentRefs<"HomeUser_currentUser">;
     } | null | undefined;
@@ -24,15 +23,7 @@ export type HomeQuery = {
   variables: HomeQuery$variables;
 };
 
-const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isLoggedIn",
-  "storageKey": null
-};
-return {
+const node: ConcreteRequest = {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -47,7 +38,6 @@ return {
         "name": "getCurrentUser",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -85,7 +75,6 @@ return {
         "name": "getCurrentUser",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -124,16 +113,15 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fc8380d2330e0c84f4d334884520530f",
+    "cacheID": "0495c5877ca91620675f81094fc583c0",
     "id": null,
     "metadata": {},
     "name": "HomeQuery",
     "operationKind": "query",
-    "text": "query HomeQuery {\n  getCurrentUser {\n    isLoggedIn\n    user {\n      ...HomeUser_currentUser\n      id\n    }\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
+    "text": "query HomeQuery {\n  getCurrentUser {\n    user {\n      ...HomeUser_currentUser\n      id\n    }\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
   }
 };
-})();
 
-(node as any).hash = "e5a4cf61b75f632c1b5644bf7eea88d0";
+(node as any).hash = "de3b942457e1dade637667a7459c84d7";
 
 export default node;

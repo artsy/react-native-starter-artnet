@@ -15,7 +15,6 @@ export const HomeScreen = () => {
     graphql`
       query HomeQuery {
         getCurrentUser {
-          isLoggedIn
           user {
             ...HomeUser_currentUser
           }
