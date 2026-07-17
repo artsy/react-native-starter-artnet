@@ -60,7 +60,17 @@ const NewsFeed = () => {
     graphql`
       query NewsFeedCreatorsQuery {
         getPublicArtworkListings(
-          input: { subscriptionId: "", page: 1, pageSize: 40 }
+          input: {
+            subscriptionId: ""
+            page: 1
+            pageSize: 40
+            # getPublicArtworkListings requires a listingDomain filter — an
+            # unfiltered call fails with INVALID_ARGUMENT. Span all public
+            # domains so we sample creators broadly.
+            filters: {
+              listingDomain: { keys: ["PdbTeaser", "Gallery", "ArtnetAuction"] }
+            }
+          }
         ) {
           results {
             listingData {
