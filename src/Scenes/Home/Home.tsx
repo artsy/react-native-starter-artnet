@@ -1,11 +1,15 @@
-import { Button, Flex, Text } from "@artsy/palette-mobile"
+import { Button, Flex, Spacer, Spinner, Text } from "@artsy/palette-mobile"
 import { ArtnetAuthWebView } from "components/ArtnetAuthWebView"
-import { useState } from "react"
+import { Suspense,useState } from "react"
+import { ErrorBoundary } from "react-error-boundary"
+import { ScrollView } from "react-native"
 import { graphql } from "react-relay"
 
 import { HomeQuery } from "__generated__/HomeQuery.graphql"
+import { HomeArtworkRails } from "Scenes/Home/HomeArtworkRails"
 import { HomeUser } from "Scenes/Home/HomeUser"
 import { GlobalStore } from "store/GlobalStore"
+import { logger } from "system/logger"
 import { useSystemQueryLoader } from "system/relay/useSystemQueryLoader"
 
 export const HomeScreen = () => {
@@ -30,16 +34,47 @@ export const HomeScreen = () => {
   }
 
   return (
-    <Flex flex={1} justifyContent="center" alignItems="center">
-      <HomeUser currentUser={user} />
-      <Button
-        onPress={() => setLoggingOut(true)}
-        accessibilityRole="button"
-        accessibilityLabel="Log out"
-        accessibilityHint="Signs out of your Artnet account"
+    <ScrollView contentContainerStyle={{ paddingVertical: 24 }}>
+      <Flex px={2} alignItems="center">
+        <HomeUser currentUser={user} />
+      </Flex>
+
+      <Spacer y={4} />
+
+      {/*
+       * Rails are isolated behind their own Suspense + error boundary so a
+       * failure loading the (optional) marketplace content never takes down the
+       * signed-in greeting above.
+       */}
+      <ErrorBoundary
+        fallback={<></>}
+        onError={(error) =>
+          logger.error("Failed to load Home artwork rails", error)
+        }
       >
-        Log out
-      </Button>
+        <Suspense
+          fallback={
+            <Flex height={220} justifyContent="center" alignItems="center">
+              <Spinner />
+            </Flex>
+          }
+        >
+          <HomeArtworkRails />
+        </Suspense>
+      </ErrorBoundary>
+
+      <Spacer y={4} />
+
+      <Flex px={2} alignItems="center">
+        <Button
+          onPress={() => setLoggingOut(true)}
+          accessibilityRole="button"
+          accessibilityLabel="Log out"
+          accessibilityHint="Signs out of your Artnet account"
+        >
+          Log out
+        </Button>
+      </Flex>
 
       {/*
        * Logout runs through the gateway's `/logout` in the WebView so the SSO
@@ -54,6 +89,6 @@ export const HomeScreen = () => {
         onSuccess={() => GlobalStore.actions.auth.signOut()}
         onClose={() => setLoggingOut(false)}
       />
-    </Flex>
+    </ScrollView>
   )
 }
