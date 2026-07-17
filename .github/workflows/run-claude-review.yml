@@ -1,0 +1,14 @@
+name: 🤖 Claude Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+jobs:
+  claude-review:
+    uses: artsy/duchamp/.github/workflows/claude-review.yml@main
+    with:
+      # Pin the review model to Sonnet (duchamp defaults to Opus).
+      model: claude-sonnet-5
+    secrets:
+      anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
