@@ -41,16 +41,15 @@ export const HomeScreen = () => {
       {/*
        * Logout runs through the gateway's `/logout` in the WebView so the SSO
        * session is ended server-side (and the `gatewaySession` cookie expires in
-       * the shared native jar). Clearing local auth state on close then drops the
-       * app back to the signed-out group.
+       * the shared native jar). Only clear local auth state once the flow
+       * actually completes (`onSuccess`); a manual cancel (`onClose`) just hides
+       * the modal and leaves the user signed in.
        */}
       <ArtnetAuthWebView
         mode="logout"
         visible={loggingOut}
-        onClose={() => {
-          setLoggingOut(false)
-          GlobalStore.actions.auth.signOut()
-        }}
+        onSuccess={() => GlobalStore.actions.auth.signOut()}
+        onClose={() => setLoggingOut(false)}
       />
     </Flex>
   )

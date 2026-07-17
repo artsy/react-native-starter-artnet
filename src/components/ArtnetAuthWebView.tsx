@@ -8,9 +8,12 @@ import { GlobalStore } from "store/GlobalStore"
 interface ArtnetAuthWebViewProps {
   mode: "login" | "logout"
   visible: boolean
+  // Called when the modal should hide — including a manual "Close" tap (cancel).
+  // Treat this as "dismiss", NOT as "the flow completed".
   onClose: () => void
-  // Called once the SSO flow completes (login mode). The gateway session is
-  // carried by the shared native cookie jar, so no cookie value is passed.
+  // Called only when the flow actually completes (the WebView redirected back to
+  // the main site) — for both login and logout. The gateway session is carried
+  // by the shared native cookie jar, so no cookie value is passed.
   onSuccess?: () => void
 }
 
@@ -61,11 +64,12 @@ export const ArtnetAuthWebView: React.FC<ArtnetAuthWebViewProps> = ({
 
     const host = getHost(navState.url)
     if (host && returnHost && host === returnHost) {
-      // Login: the session cookie is now in the shared native jar. Logout: the
-      // gateway has ended the session. Either way, dismiss.
-      if (mode === "login") {
-        onSuccess?.()
-      }
+      // Landing back on the main site means the flow finished server-side —
+      // login: the session cookie is now in the shared native jar; logout: the
+      // gateway has ended the session. Signal completion (for both modes) and
+      // dismiss. A manual "Close" tap calls only `onClose`, so an interrupted
+      // flow never looks like a completed one.
+      onSuccess?.()
       onClose()
     }
   }
