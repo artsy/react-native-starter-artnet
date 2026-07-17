@@ -97,6 +97,7 @@ export const ArtnetAuthWebView: React.FC<ArtnetAuthWebViewProps> = ({
 
         <Flex flex={1}>
           <WebView
+            testID="artnetAuthWebView"
             source={{ uri: sourceURL }}
             onNavigationStateChange={handleNavigationStateChange}
             // Share cookies with the app's native cookie jar so the gateway

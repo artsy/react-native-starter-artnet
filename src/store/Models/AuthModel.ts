@@ -1,6 +1,7 @@
 import { Action, action, Thunk, thunk } from "easy-peasy"
 
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
+import { logger } from "system/logger"
 
 interface AuthModelState {
   // Whether the user has completed the Artnet SSO flow. The actual
@@ -9,6 +10,8 @@ interface AuthModelState {
   // track the signed-in state here, mirroring how the web client relies on the
   // browser's cookie jar rather than reading the httpOnly cookie itself.
   isSignedIn: boolean
+  // Populated from `currentUser` after sign-in (see `hydrateUser`). Used for the
+  // feature-flag targeting context; not required for auth (the cookie is).
   userID: string | null
   email: string | null
 }
@@ -22,6 +25,7 @@ const authModelInitialState: AuthModelState = {
 export interface AuthModel extends AuthModelState {
   setState: Action<this, Partial<AuthModelState>>
   setSignedIn: Action<this>
+  hydrateUser: Thunk<this, void, {}, GlobalStoreModel, Promise<void>>
   signOut: Thunk<this, void, {}, GlobalStoreModel>
 }
 
@@ -36,6 +40,36 @@ export const AuthModel: AuthModel = {
   // to the Artnet site.
   setSignedIn: action((state) => {
     state.isSignedIn = true
+  }),
+
+  // Fetches the signed-in viewer from the gateway and records their id/email for
+  // the feature-flag context. Auth rides on the shared cookie jar
+  // (`credentials: "include"`), so no token/header is needed. Best-effort — a
+  // failure just leaves the user fields null.
+  hydrateUser: thunk(async (actions, _payload, { getStoreState }) => {
+    const { graphqlURL } = getStoreState().config.environment.strings
+
+    try {
+      const response = await fetch(graphqlURL, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: "query CurrentUserAuth { currentUser { id email } }",
+        }),
+      })
+      const json = await response.json()
+      const currentUser = json?.data?.currentUser
+
+      if (currentUser) {
+        actions.setState({
+          userID: currentUser.id ?? null,
+          email: currentUser.email ?? null,
+        })
+      }
+    } catch (error) {
+      logger.error("Failed to hydrate the current user", error as Error)
+    }
   }),
 
   // Local sign-out: drop back to the signed-out group. The gateway session is
