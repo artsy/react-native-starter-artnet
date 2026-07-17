@@ -13,8 +13,8 @@ interface AuthModelState {
   // track the signed-in state here, mirroring how the web client relies on the
   // browser's cookie jar rather than reading the httpOnly cookie itself.
   isSignedIn: boolean
-  // Populated from `currentUser` after sign-in (see `hydrateUser`). Used for the
-  // feature-flag targeting context; not required for auth (the cookie is).
+  // Populated from `getCurrentUser` after sign-in (see `hydrateUser`). Used for
+  // the feature-flag targeting context; not required for auth (the cookie is).
   userID: string | null
   email: string | null
 }
