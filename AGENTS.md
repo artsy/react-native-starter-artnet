@@ -11,7 +11,7 @@ with the same stack and patterns.
 - **React Native 0.85 + Expo SDK 56** (React 19.2) — Cross-platform mobile framework, prebuild workflow
 - **TypeScript** — Strict mode enabled, avoid `any`
 - **Relay** — GraphQL data fetching (hooks preferred over HOCs)
-- **GraphQL / Metaphysics** — Artsy's GraphQL API
+- **GraphQL / Artnet gateway** — Artnet's GraphQL gateway API
 - **@artsy/palette-mobile** — Design system and reusable component toolkit
 - **react-navigation** — Screen navigation and routing (native-stack)
 - **easy-peasy** — Global state management + persistence
@@ -36,7 +36,7 @@ yarn test Login                    # Run a specific test
 yarn type-check                    # Relay compiler + TypeScript check
 yarn lint                          # ESLint with auto-fix
 yarn relay                         # Compile Relay fragments/queries
-yarn sync-schema                   # Sync GraphQL schema from Metaphysics
+yarn sync-schema                   # Sync GraphQL schema from the Artnet gateway
 ```
 
 ## Pre-Commit Verification
@@ -150,7 +150,7 @@ src/
 ├── utils/test/             # Test helpers (setupTestWrapper, renderWithWrappers)
 └── __generated__/          # Relay-generated artifacts (do not edit)
 data/
-└── schema.graphql          # Metaphysics GraphQL schema
+└── schema.graphql          # Artnet gateway GraphQL schema
 ```
 
 ## Testing

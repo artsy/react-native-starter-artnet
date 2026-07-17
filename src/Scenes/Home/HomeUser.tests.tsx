@@ -9,17 +9,20 @@ const { renderWithRelay } = setupTestWrapper<HomeUserTestQuery>({
   Component: HomeUser,
   query: graphql`
     query HomeUserTestQuery @relay_test_operation {
-      me {
-        ...HomeUser_me
+      currentUser {
+        ...HomeUser_currentUser
       }
     }
   `,
 })
 
 describe("HomeUser", () => {
-  it("renders the user's name and email", () => {
+  it("renders the user's displayName and email", () => {
     renderWithRelay({
-      Me: () => ({ name: "Andy Warhol", email: "andy@example.com" }),
+      User: () => ({
+        displayName: "Andy Warhol",
+        email: "andy@example.com",
+      }),
     })
 
     expect(screen.getByText("Andy Warhol")).toBeTruthy()

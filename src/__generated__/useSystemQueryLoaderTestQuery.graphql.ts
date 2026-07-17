@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fd6e0849d35031bd1213e9f2717d0f2b>>
+ * @generated SignedSource<<9ef409aa782c85eb078fd54a0f0ee4bb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,8 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type useSystemQueryLoaderTestQuery$variables = Record<PropertyKey, never>;
 export type useSystemQueryLoaderTestQuery$data = {
-  readonly me: {
-    readonly name: string | null | undefined;
+  readonly currentUser: {
+    readonly displayName: string;
   } | null | undefined;
 };
 export type useSystemQueryLoaderTestQuery = {
@@ -25,7 +25,7 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "displayName",
   "storageKey": null
 };
 return {
@@ -38,9 +38,9 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Me",
+        "concreteType": "User",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "currentUser",
         "plural": false,
         "selections": [
           (v0/*: any*/)
@@ -60,9 +60,9 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Me",
+        "concreteType": "User",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "currentUser",
         "plural": false,
         "selections": [
           (v0/*: any*/),
@@ -79,37 +79,37 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c5abcfd06b351319406bca5f2131b52d",
+    "cacheID": "92afcb21490d78cc5d78bcff7c69b8a9",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
-        "me": {
+        "currentUser": {
           "enumValues": null,
           "nullable": true,
           "plural": false,
-          "type": "Me"
+          "type": "User"
         },
-        "me.id": {
+        "currentUser.displayName": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "String"
+        },
+        "currentUser.id": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
           "type": "ID"
-        },
-        "me.name": {
-          "enumValues": null,
-          "nullable": true,
-          "plural": false,
-          "type": "String"
         }
       }
     },
     "name": "useSystemQueryLoaderTestQuery",
     "operationKind": "query",
-    "text": "query useSystemQueryLoaderTestQuery {\n  me {\n    name\n    id\n  }\n}\n"
+    "text": "query useSystemQueryLoaderTestQuery {\n  currentUser {\n    displayName\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3d57fe4f56d88eac0eac315c90bcbca9";
+(node as any).hash = "f44923f0d6dd6f0fdc24a6c922494c3b";
 
 export default node;

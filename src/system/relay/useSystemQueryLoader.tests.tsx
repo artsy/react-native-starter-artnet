@@ -10,22 +10,22 @@ const TestComponent = () => {
   const data = useSystemQueryLoader<useSystemQueryLoaderTestQuery>(
     graphql`
       query useSystemQueryLoaderTestQuery @relay_test_operation {
-        me {
-          name
+        currentUser {
+          displayName
         }
       }
     `,
     {}
   )
 
-  return <Text>{data.me?.name}</Text>
+  return <Text>{data.currentUser?.displayName}</Text>
 }
 
 const { renderWithRelay } = setupTestWrapper({ Component: TestComponent })
 
 describe("useSystemQueryLoader", () => {
   it("loads query data through the wrapper", async () => {
-    renderWithRelay({ Me: () => ({ name: "Andy Warhol" }) })
+    renderWithRelay({ User: () => ({ displayName: "Andy Warhol" }) })
 
     // The component suspends until the mock operation resolves, so wait for
     // the re-render rather than asserting synchronously.
