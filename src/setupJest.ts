@@ -66,6 +66,14 @@ jest.mock("react-native-blurhash", () => {
   return { Blurhash: ReactNative.View }
 })
 
+// @shopify/flash-list v2 ships untransformed ESM and only supports the New
+// Architecture at runtime (it throws under Jest's old-arch renderer). Map it to
+// RN's FlatList so list components render their items in tests.
+jest.mock("@shopify/flash-list", () => {
+  const ReactNative = require("react-native")
+  return { FlashList: ReactNative.FlatList }
+})
+
 jest.mock("react-native-collapsible-tab-view", () => {
   const ReactNative = require("react-native")
   return {

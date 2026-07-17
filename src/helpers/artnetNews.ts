@@ -1,0 +1,30 @@
+/**
+ * Extracts the numeric **article id** from an Artnet news article URL, or
+ * returns `null` if the URL isn't a news article.
+ *
+ * News lives on the news subdomain (`news.artnet.com` in prod, `<env>-news.
+ * artnet-dev.com` on staging). An individual article path ends in `-<digits>`
+ * (the article id), e.g. `/art-world/andy-warhol-...-446897`; category/author/
+ * search pages (`/art-world`, `/author/...`, `/search/...`) do not.
+ *
+ * The id is the article's canonical identity: two URLs with the same id are the
+ * same article even if they differ by trailing slash, query string, `#anchor`,
+ * or scheme/host canonicalization — which is what callers compare on rather
+ * than raw URL equality.
+ */
+export const newsArticleId = (url: string): string | null => {
+  const match = /^[a-z]+:\/\/([^/?#]+)([^?#]*)/i.exec(url)
+  if (!match) {
+    return null
+  }
+  const host = match[1].split(":")[0].toLowerCase()
+  const path = match[2] || ""
+
+  // Match the news label at a boundary — start of host, a subdomain dot, or the
+  // env-prefix hyphen (`qa1-news.artnet-dev.com`) — so `notnews.artnet.com`
+  // isn't treated as a news host.
+  const isNewsHost = /(^|[.-])news\.artnet(-dev)?\.com$/.test(host)
+  const idMatch = /-(\d+)\/?$/.exec(path)
+
+  return isNewsHost && idMatch ? idMatch[1] : null
+}
