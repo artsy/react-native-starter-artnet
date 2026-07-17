@@ -46,7 +46,16 @@ Screens live under `src/Scenes/` (one folder per top-level screen).
 ### WebView-backed screens (News)
 
 The **News** tab is a nested native-stack (`NewsFeed` → `NewsArticle`) used as a
-tab's `screen`. Articles render in a `react-native-webview`, but navigation
+tab's `screen`.
+
+The gateway has **no global news feed** — `getNewsArticles` must be scoped to an
+entity (artist/gallery/auction house) and errors on an unfiltered call. So
+`NewsFeed` seeds itself from Home's public listings: it queries listings, derives
+the artists (`creator`s) from them, and then fetches `getNewsArticles` scoped to
+those creators (only when there's at least one, so it never sends an empty
+filter). When there are no creators or no articles, it shows a small empty state.
+
+Articles render in a `react-native-webview`, but navigation
 stays in react-navigation: `NewsArticle`'s `onShouldStartLoadWithRequest`
 intercepts in-WebView link taps and, for a tap on a *different* article, calls
 `navigation.push("NewsArticle", …)` and returns `false` to block the in-WebView
