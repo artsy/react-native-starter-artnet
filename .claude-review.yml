@@ -1,0 +1,42 @@
+# Config for the Claude AI PR review (artsy/duchamp reusable workflow).
+# See .github/workflows/run-claude-review.yml.
+
+exclude:
+  # Defaults (^Deploy$, "graphql schema") still apply; these are additional.
+  title_patterns:
+    - "^chore\\(release\\)"
+    - "bump version"
+    - "update .* schema"
+
+focus_areas:
+  - |
+    Relay / GraphQL: fragments must be co-located with the component that uses
+    them; queries load through `useSystemQueryLoader` (never `useLazyLoadQuery`
+    directly) and the environment through `useSystemRelayEnvironment` (never
+    `useRelayEnvironment`). Generated artifacts in `src/__generated__/` are
+    committed and never hand-edited — flag hand edits, and flag query/fragment
+    changes without a matching regenerated artifact (run `yarn relay`).
+  - |
+    Auth / session security: the app authenticates against the Artnet gateway
+    with an SSO cookie (`gatewaySession`). Flag the session cookie being logged,
+    persisted somewhere world-readable, or leaked into analytics/Sentry, and
+    flag changes that leave the login/logout WebView flow broken or bypassable.
+  - |
+    easy-peasy store: read state via `GlobalStore.useAppState` and dispatch via
+    `GlobalStore.actions`. Any change to a store Model's shape MUST bump
+    `STORE_VERSION` in `src/store/GlobalStore.tsx` (add a migration where the
+    persisted shape needs upgrading) — flag a shape change without a bump.
+  - |
+    Conventions: strict TypeScript, avoid `any`; use `@artsy/palette-mobile`
+    primitives instead of re-implementing them; absolute imports from `src/`;
+    do not import across Scenes (extract shared code to `components/`/`helpers/`);
+    log via `system/logger`, not `console.*`.
+  - |
+    Feature flags: gate work behind `useFeatureFlag` / `useFeatureVariant`, never
+    Unleash's `useFlag` / `useVariant` directly.
+  - |
+    Accessibility: interactive elements need `accessibilityRole` and
+    `accessibilityLabel` (and a hint where useful); no nested touchables.
+  - |
+    Docs: user-facing changes (features, config, commands, architecture) should
+    update the VitePress docs under `docs/` in the same PR.
