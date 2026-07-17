@@ -3,12 +3,14 @@ import {
   Image,
   Separator,
   Spacer,
+  Spinner,
   Text,
   Touchable,
 } from "@artsy/palette-mobile"
 import { useNavigation } from "@react-navigation/native"
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { FlashList } from "@shopify/flash-list"
+import { Suspense } from "react"
 import { graphql } from "react-relay"
 
 import { NewsFeedCreatorsQuery } from "__generated__/NewsFeedCreatorsQuery.graphql"
@@ -29,6 +31,23 @@ const EmptyState = ({ message }: { message: string }) => (
   </Flex>
 )
 
+const Loading = () => (
+  <Flex flex={1} justifyContent="center" alignItems="center">
+    <Spinner />
+  </Flex>
+)
+
+/**
+ * The News tab. Both phases below suspend (a listings query, then a scoped news
+ * query), so the screen owns a Suspense boundary that shows a spinner until the
+ * feed is ready.
+ */
+export const NewsFeedScreen = () => (
+  <Suspense fallback={<Loading />}>
+    <NewsFeed />
+  </Suspense>
+)
+
 /**
  * The Artnet gateway has no global news feed — `getNewsArticles` must be scoped
  * to an entity (artist/gallery/auction house), and an unfiltered call errors.
@@ -36,7 +55,7 @@ const EmptyState = ({ message }: { message: string }) => (
  * listings and show news for them. Two phases: derive creator ids, then fetch
  * their news (only when we have at least one, so we never send an empty filter).
  */
-export const NewsFeedScreen = () => {
+const NewsFeed = () => {
   const data = useSystemQueryLoader<NewsFeedCreatorsQuery>(
     graphql`
       query NewsFeedCreatorsQuery {
