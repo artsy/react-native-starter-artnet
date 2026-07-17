@@ -6,8 +6,8 @@ export default defineConfig({
   description:
     "Artsy's starter template for new React Native apps — an Expo-managed project mirroring the conventions of Artsy's production apps.",
 
-  // Project site on GitHub Pages: https://artsy.github.io/react-native-starter/
-  base: "/react-native-starter/",
+  // Project site on GitHub Pages: https://artsy.github.io/react-native-starter-artnet/
+  base: "/react-native-starter-artnet/",
 
   // Keep repo-only markdown (PR template, legacy env notes) out of the site
   // build and navigation. These files stay in the repo for CI/tooling.
@@ -50,13 +50,13 @@ export default defineConfig({
     socialLinks: [
       {
         icon: "github",
-        link: "https://github.com/artsy/react-native-starter",
+        link: "https://github.com/artsy/react-native-starter-artnet",
       },
     ],
 
     editLink: {
       pattern:
-        "https://github.com/artsy/react-native-starter/edit/main/docs/:path",
+        "https://github.com/artsy/react-native-starter-artnet/edit/main/docs/:path",
       text: "Edit this page on GitHub",
     },
 

@@ -20,22 +20,19 @@ cp keys.example.json keys.json
 ```json
 {
   "OSS": "true",
-  "secure": {
-    "ARTSY_API_CLIENT_KEY": "-",
-    "ARTSY_API_CLIENT_SECRET": "-"
-  }
+  "secure": {}
 }
 ```
 
-Values under `secure` are read in code with `Keys.secureFor(...)`. For example,
-`src/store/Models/AuthModel.ts` uses them to authenticate against Gravity:
+Values under `secure` are read in code with `Keys.secureFor(...)`. This is the
+seam for any native-layer secret an app needs.
 
-```ts
-import Keys from "react-native-keys"
-
-const client_id = Keys.secureFor("ARTSY_API_CLIENT_KEY")
-const client_secret = Keys.secureFor("ARTSY_API_CLIENT_SECRET")
-```
+::: tip Auth needs no client keys
+Authentication no longer uses API client keys. The app signs in against the
+**Artnet gateway** via an SSO session cookie captured in a WebView — see
+[Artnet Backend](/artnet-backend). `react-native-keys` remains available for
+other native secrets.
+:::
 
 ::: warning Real key files are gitignored
 `.gitignore` ignores `keys*.json` except `keys.example.json`. Never commit a
@@ -139,15 +136,21 @@ constraint used to gate a flag server-side).
 ## GraphQL environments
 
 Backend endpoints are defined per environment in
-`src/store/Models/EnvironmentModel.ts` (`staging` vs `production`):
+`src/store/Models/EnvironmentModel.ts` (`staging` vs `production`). The app talks
+to the **Artnet GraphQL gateway**; `graphqlURL`, `loginURL`, and `logoutURL` are
+derived from `gatewayURL`:
 
-| Service     | Staging                                    | Production                              |
-| ----------- | ------------------------------------------ | --------------------------------------- |
-| Gravity     | `https://stagingapi.artsy.net`             | `https://api.artsy.net`                 |
-| Metaphysics | `https://metaphysics-staging.artsy.net/v2` | `https://metaphysics-production.artsy.net/v2` |
+| Value        | Staging                            | Production                     |
+| ------------ | ---------------------------------- | ------------------------------ |
+| `gatewayURL` | `https://gateway.artnet-dev.com`   | `https://gateway.artnet.com`   |
+| `webURL`     | `https://www.artnet-dev.com`       | `https://www.artnet.com`       |
+
+See [Artnet Backend](/artnet-backend) for the gateway, the SSO cookie auth flow,
+and Relay compatibility notes.
 
 Sync the GraphQL schema used by the Relay compiler with:
 
 ```sh
-yarn sync-schema   # writes data/schema.graphql from Metaphysics
+# Introspects the Artnet gateway (override the URL with ARTNET_GRAPHQL_URL).
+yarn sync-schema   # writes data/schema.graphql from the Artnet gateway
 ```

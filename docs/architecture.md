@@ -54,7 +54,9 @@ Global state uses **easy-peasy**, configured in `src/store/GlobalStore.tsx`:
 
 ```tsx
 // Read
-const token = GlobalStore.useAppState((state) => state.auth.userAccessToken)
+const sessionCookie = GlobalStore.useAppState(
+  (state) => state.auth.sessionCookie
+)
 
 // Dispatch
 GlobalStore.actions.auth.signOut()

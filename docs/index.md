@@ -15,15 +15,15 @@ hero:
       link: /configuration
     - theme: alt
       text: View on GitHub
-      link: https://github.com/artsy/react-native-starter
+      link: https://github.com/artsy/react-native-starter-artnet
 
 features:
   - title: Expo + Prebuild (CNG)
     details: React Native via the Expo managed workflow. Native ios/ and android/ folders are generated from app.json — never committed, never hand-edited.
   - title: TypeScript, strict
     details: Strict-mode TypeScript with absolute imports from src/. Relay compiler runs as part of the type-check.
-  - title: Relay + Metaphysics
-    details: Relay 20 wired to Artsy's GraphQL API with co-located fragments and a useSystemQueryLoader / useSystemRelayEnvironment seam for future cross-cutting behavior.
+  - title: Relay + Artnet gateway
+    details: Relay 20 wired to the Artnet GraphQL gateway with co-located fragments and a useSystemQueryLoader / useSystemRelayEnvironment seam for future cross-cutting behavior.
   - title: Palette design system
     details: UI primitives from @artsy/palette-mobile (Flex, Text, Button, Input, Theme) — no re-implementing the basics.
   - title: State + persistence
