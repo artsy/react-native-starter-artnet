@@ -11,7 +11,7 @@ This repo is a **GitHub template**. To kickstart your own app:
 
 1. **Get a copy** — click **“Use this template” → Create a new repository** on
    GitHub for a clean-history copy. Without GitHub you can also
-   `npx degit artsy/react-native-starter my-app`, or fork/clone.
+   `npx degit artsy/react-native-starter-artnet my-app`, or fork/clone.
 2. **Rebrand** — in `app.json`, set your app `name`, `slug`, iOS
    `bundleIdentifier`, Android `package`, and icons/splash. Never hand-edit the
    generated native folders — they're regenerated on every prebuild.
