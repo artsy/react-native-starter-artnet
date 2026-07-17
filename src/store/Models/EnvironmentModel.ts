@@ -34,7 +34,11 @@ export const environmentOptions = defineEnvironmentOptions({
 export type EnvironmentKey = keyof typeof environmentOptions
 
 // Keys derived from the base environment options (e.g. gateway endpoints).
-type DerivedEnvironmentKey = "graphqlURL" | "loginURL" | "logoutURL"
+type DerivedEnvironmentKey =
+  | "graphqlURL"
+  | "loginURL"
+  | "logoutURL"
+  | "imagesURL"
 
 export type EnvironmentStrings = { [k in EnvironmentKey]: string } & {
   [k in DerivedEnvironmentKey]: string
@@ -60,13 +64,15 @@ export const EnvironmentModel: EnvironmentModel = {
     const gatewayURL = environmentOptions.gatewayURL.presets[activeEnvironment]
     const webURL = environmentOptions.webURL.presets[activeEnvironment]
 
-    // Derive the gateway endpoints from the resolved gateway URL.
+    // Derive the gateway endpoints from the resolved gateway URL, and the
+    // image CDN host from the web URL (www.* → images.*).
     return {
       gatewayURL,
       webURL,
       graphqlURL: gatewayURL + "/graphql",
       loginURL: gatewayURL + "/login",
       logoutURL: gatewayURL + "/logout",
+      imagesURL: webURL.replace("://www.", "://images."),
     }
   }),
 }
