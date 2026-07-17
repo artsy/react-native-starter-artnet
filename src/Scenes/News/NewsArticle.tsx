@@ -10,6 +10,30 @@ import { NewsStackParamList } from "Scenes/News/types"
 type Props = StaticScreenProps<NewsStackParamList["NewsArticle"]>
 
 /**
+ * Decides what the article WebView does with a navigation request, keeping
+ * navigation in react-navigation: the screen's own article loads in place, a
+ * tap on ANOTHER article is intercepted (`onOpenArticle` pushes a new screen,
+ * returns `false` to block the in-WebView load), and everything else
+ * (category/author/search) loads in place. Extracted as a pure function so the
+ * interception logic is testable without mounting the WebView.
+ */
+export const makeArticleLinkInterceptor =
+  (currentUrl: string, onOpenArticle: (url: string) => void) =>
+  (request: { url: string }): boolean => {
+    // Always allow this screen's own article to load.
+    if (request.url === currentUrl) {
+      return true
+    }
+    // Intercept taps on other articles → push a new native screen.
+    if (isNewsArticleUrl(request.url)) {
+      onOpenArticle(request.url)
+      return false
+    }
+    // Category/author/search and other links load in place.
+    return true
+  }
+
+/**
  * Renders a single Artnet news article in a WebView. Navigation stays in
  * react-navigation: links to OTHER articles are intercepted and pushed as new
  * native screens (so the stack's back button walks article history), while
@@ -41,19 +65,10 @@ export const NewsArticleScreen = ({ route }: Props) => {
             <Spinner />
           </Flex>
         )}
-        onShouldStartLoadWithRequest={(request) => {
-          // Always allow this screen's own article to load.
-          if (request.url === url) {
-            return true
-          }
-          // Intercept taps on other articles → push a new native screen.
-          if (isNewsArticleUrl(request.url)) {
-            navigation.push("NewsArticle", { url: request.url })
-            return false
-          }
-          // Category/author/search and other links load in place.
-          return true
-        }}
+        onShouldStartLoadWithRequest={makeArticleLinkInterceptor(
+          url,
+          (articleUrl) => navigation.push("NewsArticle", { url: articleUrl })
+        )}
       />
     </Flex>
   )
