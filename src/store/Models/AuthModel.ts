@@ -1,26 +1,29 @@
-import CookieManager from "@react-native-cookies/cookies"
 import { Action, action, Thunk, thunk } from "easy-peasy"
 
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
-import { logger } from "system/logger"
 
 interface AuthModelState {
-  sessionCookie: string | null
+  // Whether the user has completed the Artnet SSO flow. The actual
+  // `gatewaySession` cookie lives in the native cookie jar (shared with the
+  // login WebView) and is sent automatically on GraphQL requests — we only
+  // track the signed-in state here, mirroring how the web client relies on the
+  // browser's cookie jar rather than reading the httpOnly cookie itself.
+  isSignedIn: boolean
   userID: string | null
   email: string | null
 }
 
 const authModelInitialState: AuthModelState = {
-  sessionCookie: null,
+  isSignedIn: false,
   userID: null,
   email: null,
 }
 
 export interface AuthModel extends AuthModelState {
   setState: Action<this, Partial<AuthModelState>>
-  setSession: Action<
+  setSignedIn: Action<
     this,
-    { sessionCookie: string; userID?: string | null; email?: string | null }
+    { userID?: string | null; email?: string | null } | void
   >
   signOut: Thunk<this, void, {}, GlobalStoreModel>
 }
@@ -32,26 +35,22 @@ export const AuthModel: AuthModel = {
     Object.assign(state, payload)
   }),
 
-  // Flips the nav guard: setting `sessionCookie` moves the app into the
-  // signed-in navigation group.
-  setSession: action((state, payload) => {
-    state.sessionCookie = payload.sessionCookie
-    if (payload.userID !== undefined) {
+  // Flips the nav guard into the signed-in group after the SSO WebView returns
+  // to the Artnet site. Optionally records user fields if we have them.
+  setSignedIn: action((state, payload) => {
+    state.isSignedIn = true
+    if (payload && payload.userID !== undefined) {
       state.userID = payload.userID
     }
-    if (payload.email !== undefined) {
+    if (payload && payload.email !== undefined) {
       state.email = payload.email
     }
   }),
 
-  // Resilient sign-out: best-effort cookie clear, then reset auth state. Never
-  // throws so callers don't need to guard it.
+  // Local sign-out: drop back to the signed-out group. The gateway session is
+  // ended server-side by loading `logoutURL` in the auth WebView (see
+  // ArtnetAuthWebView), which also expires the `gatewaySession` cookie.
   signOut: thunk(async (actions) => {
-    try {
-      await CookieManager.clearAll()
-    } catch (error) {
-      logger.error("Failed to clear cookies on sign out", error as Error)
-    }
     actions.setState(authModelInitialState)
   }),
 }

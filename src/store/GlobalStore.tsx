@@ -12,10 +12,11 @@ import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 
 // Bump on every change to a store Model's shape. v1 added the `devMenu` slice
 // (feature-flag overrides + anonymous stickiness id). v2 reshaped the auth slice
-// for Artnet cookie/SSO auth (sessionCookie/userID/email replacing the old
-// Artsy/Gravity token fields). This repo has no migration runner yet, so a
-// version bump resets persisted state to the new default shape.
-const STORE_VERSION = 2
+// for Artnet cookie/SSO auth (replacing the old Artsy/Gravity token fields). v3
+// simplified auth to an `isSignedIn` flag (the gateway session lives in the
+// shared native cookie jar). This repo has no migration runner yet, so a version
+// bump resets persisted state to the new default shape.
+const STORE_VERSION = 3
 
 if (Platform.OS === "ios") {
   // @ts-ignore
