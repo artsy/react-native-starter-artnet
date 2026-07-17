@@ -27,12 +27,13 @@ const { renderWithRelay } = setupTestWrapper<HomeArtworkRailsQuery>({
 describe("HomeArtworkRails", () => {
   it("splits a mixed-domain response into On Artnet + domain rails", async () => {
     renderWithRelay({
+      // The real gateway returns PascalCase domain values (see HomeArtworkRails).
       SearchResults: () => ({
         results: [
-          { listingDomain: "ARTNET_AUCTION" },
-          { listingDomain: "GALLERY" },
-          { listingDomain: "GALLERY" },
-          { listingDomain: "PDB_TEASER" },
+          { listingDomain: "ArtnetAuction" },
+          { listingDomain: "Gallery" },
+          { listingDomain: "Gallery" },
+          { listingDomain: "PdbTeaser" },
         ],
       }),
     })
@@ -47,7 +48,7 @@ describe("HomeArtworkRails", () => {
     renderWithRelay({
       SearchResults: () => ({
         results: Array.from({ length: 12 }, () => ({
-          listingDomain: "GALLERY",
+          listingDomain: "Gallery",
         })),
       }),
     })
@@ -61,8 +62,8 @@ describe("HomeArtworkRails", () => {
     renderWithRelay({
       SearchResults: () => ({
         results: [
-          { listingDomain: "GALLERY" },
-          { listingDomain: "PDB_TEASER" },
+          { listingDomain: "Gallery" },
+          { listingDomain: "PdbTeaser" },
         ],
       }),
     })

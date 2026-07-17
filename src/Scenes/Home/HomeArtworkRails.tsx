@@ -41,17 +41,24 @@ export const HomeArtworkRails = () => {
 
   const listings = data.getPublicArtworkListings.results
 
+  // The deployed gateway emits `listingDomain` in PascalCase (`ArtnetAuction`,
+  // `Gallery`) even though the client schema declares the enum in
+  // SCREAMING_SNAKE — so the generated union doesn't contain the real values.
+  // Compare as a string to match what actually comes back over the wire.
+  const isDomain = (listing: (typeof listings)[number], domain: string) =>
+    (listing.listingDomain as string) === domain
+
   // Cap each rail to keep the horizontal scroll short — we fetch a larger page
   // (40) only so the domain partitions have enough rows to draw from.
   const rails = [
     { title: "On Artnet", listings },
     {
       title: "Auction lots",
-      listings: listings.filter((l) => l.listingDomain === "ARTNET_AUCTION"),
+      listings: listings.filter((l) => isDomain(l, "ArtnetAuction")),
     },
     {
       title: "From galleries",
-      listings: listings.filter((l) => l.listingDomain === "GALLERY"),
+      listings: listings.filter((l) => isDomain(l, "Gallery")),
     },
   ]
     .map((rail) => ({ ...rail, listings: rail.listings.slice(0, RAIL_SIZE) }))
