@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<54ae0ecb5c883edea7a95e1827d0bac9>>
+ * @generated SignedSource<<6de221d635de4ddceae111e69cd72018>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,8 +19,17 @@ export type ArtworkRail_listing$data = {
   } | null | undefined;
   readonly id: string;
   readonly listingData: {
+    readonly artworks: ReadonlyArray<{
+      readonly creationYearFrom: number | null | undefined;
+      readonly creationYearTo: number | null | undefined;
+      readonly creator: {
+        readonly name: string;
+      } | null | undefined;
+      readonly mediumRaw: string | null | undefined;
+    }>;
     readonly title: string | null | undefined;
   };
+  readonly saleName: string | null | undefined;
   readonly " $fragmentType": "ArtworkRail_listing";
 };
 export type ArtworkRail_listing$key = {
@@ -28,7 +37,17 @@ export type ArtworkRail_listing$key = {
   readonly " $fragmentSpreads": FragmentRefs<"ArtworkRail_listing">;
 };
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  }
+];
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -39,6 +58,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "saleName",
       "storageKey": null
     },
     {
@@ -73,6 +99,48 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "title",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ListingDataArtworkSummary",
+          "kind": "LinkedField",
+          "name": "artworks",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "CreatorSummary",
+              "kind": "LinkedField",
+              "name": "creator",
+              "plural": false,
+              "selections": (v0/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "mediumRaw",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "creationYearFrom",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "creationYearTo",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -84,22 +152,15 @@ const node: ReaderFragment = {
       "kind": "LinkedField",
       "name": "artMarketInstitution",
       "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
-        }
-      ],
+      "selections": (v0/*: any*/),
       "storageKey": null
     }
   ],
   "type": "ArtListingSummary",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "f27142ac0fcea3f0154768164e5c33c3";
+(node as any).hash = "9db081412ce310b3a61009f01737b23f";
 
 export default node;

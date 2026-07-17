@@ -8,6 +8,8 @@ import { useStoreRehydrated } from "easy-peasy"
 import { useEffect } from "react"
 import { Platform } from "react-native"
 
+import { ArtworkScreen } from "Scenes/Artwork/Artwork"
+import { ArtworkStackParamList } from "Scenes/Artwork/types"
 import { DevMenuScreen } from "Scenes/DevMenu/DevMenu"
 import { HomeScreen } from "Scenes/Home/Home"
 import { LoginScreen } from "Scenes/Login/Login"
@@ -109,6 +111,16 @@ const RootStack = createNativeStackNavigator({
       if: useIsLoggedIn,
       screens: {
         Home: HomeTabs,
+        // Artwork detail, pushed over the tabs when a Home rail card is tapped.
+        Artwork: {
+          screen: ArtworkScreen,
+          options: ({ route }) => ({
+            headerShown: true,
+            title:
+              (route.params as ArtworkStackParamList["Artwork"] | undefined)
+                ?.title ?? "Artwork",
+          }),
+        },
         // Developer-only screen for feature-flag overrides. The entry point in
         // Settings is gated on `__DEV__`, but the route is always registered so
         // the static param list stays stable.
