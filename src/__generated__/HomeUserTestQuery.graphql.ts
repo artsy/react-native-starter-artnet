@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<28880d921eb424c8087da87ed1d8acab>>
+ * @generated SignedSource<<eeede925c7a3ca0afbd19bb9f15b62a5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,14 +23,7 @@ export type HomeUserTestQuery = {
   variables: HomeUserTestQuery$variables;
 };
 
-const node: ConcreteRequest = (function(){
-var v0 = {
-  "enumValues": null,
-  "nullable": false,
-  "plural": false,
-  "type": "String"
-};
-return {
+const node: ConcreteRequest = {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -103,13 +96,6 @@ return {
                 "kind": "ScalarField",
                 "name": "displayName",
                 "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "email",
-                "storageKey": null
               }
             ],
             "storageKey": null
@@ -120,7 +106,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "106bc1858e5b5a70c68c59a9fe3c3bcb",
+    "cacheID": "02a1de19f365fb65a4e745db92705663",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -136,8 +122,12 @@ return {
           "plural": false,
           "type": "User"
         },
-        "getCurrentUser.user.displayName": (v0/*: any*/),
-        "getCurrentUser.user.email": (v0/*: any*/),
+        "getCurrentUser.user.displayName": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "String"
+        },
         "getCurrentUser.user.id": {
           "enumValues": null,
           "nullable": false,
@@ -148,10 +138,9 @@ return {
     },
     "name": "HomeUserTestQuery",
     "operationKind": "query",
-    "text": "query HomeUserTestQuery {\n  getCurrentUser {\n    user {\n      ...HomeUser_currentUser\n      id\n    }\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
+    "text": "query HomeUserTestQuery {\n  getCurrentUser {\n    user {\n      ...HomeUser_currentUser\n      id\n    }\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n}\n"
   }
 };
-})();
 
 (node as any).hash = "69252559d4126ea44493e63caaf966cf";
 

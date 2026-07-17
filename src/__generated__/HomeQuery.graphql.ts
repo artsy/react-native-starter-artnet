@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7ce106ceef5ebe36704333d1d2294d20>>
+ * @generated SignedSource<<58425a4df9dfebd0406d0bebdf781784>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -96,13 +96,6 @@ const node: ConcreteRequest = {
                 "kind": "ScalarField",
                 "name": "displayName",
                 "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "email",
-                "storageKey": null
               }
             ],
             "storageKey": null
@@ -113,12 +106,12 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "0495c5877ca91620675f81094fc583c0",
+    "cacheID": "20b0f29131df5935122fa066eb4152a8",
     "id": null,
     "metadata": {},
     "name": "HomeQuery",
     "operationKind": "query",
-    "text": "query HomeQuery {\n  getCurrentUser {\n    user {\n      ...HomeUser_currentUser\n      id\n    }\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n  email\n}\n"
+    "text": "query HomeQuery {\n  getCurrentUser {\n    user {\n      ...HomeUser_currentUser\n      id\n    }\n  }\n}\n\nfragment HomeUser_currentUser on User {\n  id\n  displayName\n}\n"
   }
 };
 

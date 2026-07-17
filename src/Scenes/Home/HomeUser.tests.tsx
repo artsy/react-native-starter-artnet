@@ -26,7 +26,7 @@ const { renderWithRelay } = setupTestWrapper<HomeUserTestQuery>({
 })
 
 describe("HomeUser", () => {
-  it("renders the user's displayName and email", () => {
+  it("renders the user's displayName (and not their email)", () => {
     renderWithRelay({
       User: () => ({
         displayName: "Andy Warhol",
@@ -35,6 +35,7 @@ describe("HomeUser", () => {
     })
 
     expect(screen.getByText("Andy Warhol")).toBeTruthy()
-    expect(screen.getByText("andy@example.com")).toBeTruthy()
+    // The email is intentionally not shown on Home.
+    expect(screen.queryByText("andy@example.com")).toBeNull()
   })
 })
