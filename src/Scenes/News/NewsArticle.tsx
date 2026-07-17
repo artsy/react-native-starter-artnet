@@ -42,7 +42,7 @@ export const makeArticleLinkInterceptor =
 export const NewsArticleScreen = ({ route }: Props) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<NewsStackParamList>>()
-  const { url } = route.params
+  const { url, title } = route.params
 
   return (
     <Flex flex={1} backgroundColor="mono0">
@@ -52,6 +52,16 @@ export const NewsArticleScreen = ({ route }: Props) => {
         sharedCookiesEnabled
         thirdPartyCookiesEnabled
         startInLoadingState
+        // Articles reached by tapping a link inside the WebView are pushed with
+        // only a URL (the title isn't known at link-tap time), so their header
+        // would read "Article". Once the page loads, adopt its document title —
+        // but only when we weren't given one from the feed (whose titles are
+        // cleaner than the full HTML <title>).
+        onNavigationStateChange={(navState) => {
+          if (!title && !navState.loading && navState.title) {
+            navigation.setOptions({ title: navState.title })
+          }
+        }}
         renderLoading={() => (
           <Flex
             position="absolute"
