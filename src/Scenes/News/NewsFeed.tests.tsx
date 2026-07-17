@@ -24,12 +24,19 @@ describe("NewsFeedScreen", () => {
     const { env, mockResolveLastOperation } = renderWithRelay({
       SearchResults: () => ({ results: [{}] }),
       ListingData: () => ({ artworks: [{}] }),
-      CreatorSummary: () => ({ id: "artist-1" }),
+      // A bare-numeric creator id — the feed should normalize it to the
+      // `Artist_<id>` key shape the news filter expects.
+      CreatorSummary: () => ({ id: "3830" }),
     })
 
     // The news query is issued on the re-render after phase 1 resolves, so wait
     // for it to become pending before resolving it.
     await waitFor(() => expect(env.mock.getAllOperations()).toHaveLength(1))
+
+    // The scoped query is sent with the normalized creator key.
+    expect(
+      env.mock.getMostRecentOperation().request.variables.creatorKeys
+    ).toEqual(["Artist_3830"])
 
     // Phase 2: the scoped getNewsArticles query resolves with an article.
     mockResolveLastOperation({

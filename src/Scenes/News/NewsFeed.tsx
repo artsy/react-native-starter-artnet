@@ -83,6 +83,10 @@ const NewsFeed = () => {
         .flatMap((result) => result.listingData.artworks)
         .map((artwork) => artwork.creator?.id)
         .filter((id): id is string => !!id)
+        // The news `creator` filter expects entity keys shaped like
+        // `Artist_<id>`. A listing's `creator.id` may already be in that form or
+        // a bare numeric id, so normalize to the prefixed key either way.
+        .map((id) => (id.startsWith("Artist_") ? id : `Artist_${id}`))
     )
   ).slice(0, MAX_CREATORS)
 
