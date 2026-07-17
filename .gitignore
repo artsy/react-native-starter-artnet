@@ -1,0 +1,113 @@
+# OSX
+#
+.DS_Store
+
+# Xcode
+#
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+ios/.xcode.env.local
+
+# Android/IntelliJ
+#
+build/
+.idea
+.gradle
+local.properties
+*.iml
+*.hprof
+.cxx/
+*.keystore
+!debug.keystore
+
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Caches
+.cache
+.jest/cache
+
+# Sniffler — generated cache / diagnostics (config + test-map ARE committed)
+.sniffler/cache.json
+.sniffler/diagnostics.json
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+
+# Bundle artifact
+*.jsbundle
+
+# CocoaPods
+/ios/Pods/
+
+# Fonts (downloaded via `yarn setup:artsy`)
+assets/fonts/*
+
+# Ignore env files
+**/.env*
+!.env.example
+
+# react-native-keys — real keys files hold secrets; only the example is tracked
+keys*.json
+!keys.example.json
+
+# Relay — generated artifacts ARE committed (run `yarn relay` after changing
+# a query/fragment and commit the result). Committing them keeps release
+# bundling and a fresh checkout working without a compile step.
+
+# Metro health check
+.metro-health-check*
+
+# for tsconfig `incremental`
+tsconfig.tsbuildinfo
+
+# testing
+/coverage
+
+# VitePress docs site (build output + cache)
+docs/.vitepress/dist
+docs/.vitepress/cache
+
+# Expo + prebuild (native projects are generated, not committed)
+.expo
+dist/
+web-build/
+/android
+/ios
+
+# yarn 4
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+
+# Fonts
+fonts.tar.gz

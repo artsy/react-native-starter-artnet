@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+#
+# setup-oss — prepare the project for open-source contributors.
+#
+# Unlike `yarn setup:artsy` (which downloads Artsy's private Unica77LL fonts and
+# env from S3 and needs Artsy AWS access), this uses no private resources. It:
+#
+#   1. Creates placeholder Unica77LL font files in assets/fonts so `expo
+#      prebuild` / the expo-font plugin resolve them. They are empty stand-ins —
+#      the real fonts are Artsy-private, so the app falls back to system fonts.
+#      Drop real .otf files in assets/fonts to use your own typefaces.
+#   2. Creates the per-environment react-native-keys files
+#      (keys.development.json for debug builds, keys.production.json for release)
+#      from keys.example.json if you don't have them yet. react-native-keys reads
+#      keys.<env>.json, not keys.json; real keys*.json are gitignored.
+#
+# Run via: yarn setup:oss
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+# Keep this list in sync with the `expo-font` plugin's `fonts` array in app.json.
+FONT_DIR="assets/fonts"
+FONTS=(
+  "Unica77LL-Regular.otf"
+  "Unica77LL-Medium.otf"
+  "Unica77LL-Italic.otf"
+  "Unica77LL-MediumItalic.otf"
+)
+
+echo "▸ Placeholder fonts in $FONT_DIR (real Unica77LL fonts are Artsy-private)"
+mkdir -p "$FONT_DIR"
+for f in "${FONTS[@]}"; do
+  if [ -s "$FONT_DIR/$f" ]; then
+    echo "  • keeping existing $FONT_DIR/$f"
+  else
+    : > "$FONT_DIR/$f"
+    echo "  • created placeholder $FONT_DIR/$f"
+  fi
+done
+
+echo "▸ react-native-keys env files (keys.development.json / keys.production.json)"
+for env in development production; do
+  target="keys.${env}.json"
+  if [ -f "$target" ]; then
+    echo "  • keeping existing $target"
+  else
+    cp keys.example.json "$target"
+    echo "  • created $target from keys.example.json — fill in your own values"
+  fi
+done
+
+echo "▸ .env (Expo public config)"
+if [ -f .env ]; then
+  echo "  • keeping existing .env"
+else
+  cp .env.example .env
+  echo "  • created .env from .env.example — fill in EXPO_PUBLIC_* values (optional)"
+fi
+
+cat <<'EOF'
+
+✅ OSS setup complete. Next:
+
+   yarn install
+   yarn prebuild            # generate ios/ and android/
+   yarn ios                 # or: yarn android
+
+Notes:
+ • Fonts are empty placeholders, so text renders in the system font. Replace the
+   files in assets/fonts with your own .otf files to change that.
+ • keys.<env>.json hold secrets and are gitignored — fill in real values as needed.
+ • If you switched app.json config (bundle id, icons, package), run a CLEAN
+   prebuild so native resources regenerate: yarn prebuild (or yarn android:clean
+   / yarn ios:clean). A stale ios/ or android/ folder causes errors like
+   "resource color/iconBackground not found".
+EOF
