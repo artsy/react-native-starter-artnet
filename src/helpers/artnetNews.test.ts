@@ -31,6 +31,10 @@ describe("isNewsArticleUrl", () => {
     expect(isNewsArticleUrl("https://www.artnet.com/artists/foo-12345")).toBe(
       false
     )
+    // "news" must be at a label boundary, not any trailing substring.
+    expect(isNewsArticleUrl("https://notnews.artnet.com/a-story-123")).toBe(
+      false
+    )
     expect(isNewsArticleUrl("not a url")).toBe(false)
   })
 })

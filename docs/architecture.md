@@ -31,7 +31,7 @@ Navigation uses **react-navigation v7's static API**, defined in
 - A native-stack `RootStack` splits into two conditional **groups** guarded by
   auth state read from the store:
   - `SignedIn` (`useIsLoggedIn`) → the `HomeTabs` bottom-tab navigator
-    (`Home`, `List`, `Settings`).
+    (`Home`, `News`, `Settings`).
   - `SignedOut` (`useIsLoggedOut`) → the `Login` screen.
 - The param list is registered on the global `ReactNavigation.RootParamList`
   namespace via `StaticParamList<typeof RootStack>`, so `useNavigation()` is
@@ -117,7 +117,7 @@ production. Routing every call site through one module means future transports
 src/
 ├── App.tsx                 # Root component + provider tree
 ├── Navigation.tsx          # Route definitions + navigation stack
-├── Scenes/                 # Top-level screens (Home, List, Login, Settings)
+├── Scenes/                 # Top-level screens (Home, News, Login, Settings)
 ├── components/             # Shared UI components across scenes
 ├── helpers/                # Shared utilities
 ├── relay/                  # Relay environment + network middlewares

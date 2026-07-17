@@ -16,7 +16,10 @@ export const isNewsArticleUrl = (url: string): boolean => {
   const host = match[1].split(":")[0].toLowerCase()
   const path = match[2] || ""
 
-  const isNewsHost = /news\.artnet(-dev)?\.com$/.test(host)
+  // Match the news label at a boundary — start of host, a subdomain dot, or the
+  // env-prefix hyphen (`qa1-news.artnet-dev.com`) — so `notnews.artnet.com`
+  // isn't treated as a news host.
+  const isNewsHost = /(^|[.-])news\.artnet(-dev)?\.com$/.test(host)
   const isArticlePath = /-\d+\/?$/.test(path)
 
   return isNewsHost && isArticlePath

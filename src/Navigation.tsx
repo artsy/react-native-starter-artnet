@@ -13,6 +13,7 @@ import { HomeScreen } from "Scenes/Home/Home"
 import { LoginScreen } from "Scenes/Login/Login"
 import { NewsArticleScreen } from "Scenes/News/NewsArticle"
 import { NewsFeedScreen } from "Scenes/News/NewsFeed"
+import { NewsStackParamList } from "Scenes/News/types"
 import { SettingsScreen } from "Scenes/Settings/Settings"
 import { GlobalStore } from "store/GlobalStore"
 
@@ -35,7 +36,8 @@ const NewsStack = createNativeStackNavigator({
       options: ({ route }) => ({
         headerShown: true,
         title:
-          (route.params as { title?: string } | undefined)?.title ?? "Article",
+          (route.params as NewsStackParamList["NewsArticle"] | undefined)
+            ?.title ?? "Article",
       }),
     },
   },
