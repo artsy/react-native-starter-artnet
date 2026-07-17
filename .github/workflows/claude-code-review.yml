@@ -1,0 +1,77 @@
+name: 🤖 Claude Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# Only run one review per PR ref at a time; cancel superseded runs.
+concurrency:
+  group: claude-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  claude-review:
+    name: Claude Code Review
+    # Skip drafts and automated dependency bumps to save review budget.
+    if: |
+      github.event.pull_request.draft == false &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          # Org-provided secret (configured centrally, so no duchamp change is
+          # needed to run reviews here).
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Pin the review model to Sonnet at the repo level.
+          claude_args: "--model claude-sonnet-5"
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            You are reviewing a pull request for `react-native-starter`, an
+            Expo-managed (prebuild/CNG) React Native app that uses Relay against
+            the Artnet GraphQL gateway, easy-peasy for global state, and
+            @artsy/palette-mobile for UI. Read AGENTS.md for the full
+            conventions before reviewing.
+
+            Give a focused, high-signal review. Prioritise real problems over
+            style nits. Post inline comments on the specific lines, and leave a
+            short summary. Focus areas for this codebase:
+
+            - **Relay / GraphQL**: fragments co-located with their component,
+              queries loaded via `useSystemQueryLoader` (not `useLazyLoadQuery`)
+              and the environment read via `useSystemRelayEnvironment`; generated
+              artifacts in `src/__generated__/` committed and never hand-edited;
+              `yarn relay` run after query/fragment changes.
+            - **Auth / session security**: the app authenticates against the
+              Artnet gateway via an SSO cookie (`gatewaySession`). Watch for the
+              session cookie being logged, leaked, or mishandled, and for the
+              login/logout WebView flow being bypassed or left in a broken state.
+            - **State**: read state via `GlobalStore.useAppState`, dispatch via
+              `GlobalStore.actions`; any change to a store Model's shape must bump
+              `STORE_VERSION` (and add a migration where relevant).
+            - **TypeScript**: strict mode, avoid `any`.
+            - **Palette & imports**: use palette-mobile primitives rather than
+              re-implementing them; absolute imports from `src/`; do not import
+              across Scenes (extract shared code to `components/`/`helpers/`).
+            - **Accessibility**: interactive elements have `accessibilityRole`,
+              `accessibilityLabel`, and a hint where useful; no nested touchables.
+            - **Feature flags**: gated via `useFeatureFlag`/`useFeatureVariant`,
+              never Unleash's `useFlag`/`useVariant` directly.
+            - **Tests**: co-located `*.tests.tsx`/`*.test.ts` using
+              @testing-library/react-native; no `fdescribe`/`it.only` left behind.
+            - **Docs**: user-facing changes update the VitePress docs under
+              `docs/` in the same PR.
