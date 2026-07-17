@@ -10,6 +10,13 @@ import { useSystemQueryLoader } from "system/relay/useSystemQueryLoader"
  * public listings query (`getPublicArtworkListings`, no auth/subscription
  * needed — `subscriptionId` is intentionally empty, mirroring the web client)
  * sliced with a different static `listingDomain` filter.
+ *
+ * The `listingDomain` keys are the gateway's PascalCase enum *string* values
+ * (`ArtnetAuction`, `Gallery`) — not the SCREAMING_SNAKE names from the client
+ * schema's `ListingDomain` enum. The filter field is a plain `[String!]`, so
+ * the schema accepts any string, but the gateway rejects unknown keys with
+ * `INVALID_ARGUMENT: The filter criterion for 'ListingDomain' is invalid.`
+ * These match `presentation-main-ui`'s public-listings query.
  */
 export const HomeArtworkRails = () => {
   const data = useSystemQueryLoader<HomeArtworkRailsQuery>(
@@ -27,7 +34,7 @@ export const HomeArtworkRails = () => {
             subscriptionId: ""
             page: 1
             pageSize: 10
-            filters: { listingDomain: { keys: ["ARTNET_AUCTION"] } }
+            filters: { listingDomain: { keys: ["ArtnetAuction"] } }
           }
         ) {
           results {
@@ -39,7 +46,7 @@ export const HomeArtworkRails = () => {
             subscriptionId: ""
             page: 1
             pageSize: 10
-            filters: { listingDomain: { keys: ["GALLERY"] } }
+            filters: { listingDomain: { keys: ["Gallery"] } }
           }
         ) {
           results {
