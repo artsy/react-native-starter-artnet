@@ -7,6 +7,7 @@ import {
 } from "react-relay-network-modern"
 import { Environment, RecordSource, Store } from "relay-runtime"
 
+import { getDataID } from "relay/getDataID"
 import { artnetUrlMiddleware } from "relay/middlewares/artnetUrlMiddleware"
 import { authMiddleware } from "relay/middlewares/authMiddleware"
 
@@ -33,4 +34,7 @@ const network = new RelayNetworkLayer(
 export const defaultEnvironment = new Environment({
   network,
   store: new Store(new RecordSource()),
+  // The Artnet gateway reuses ids across types (e.g. an ArtListingSummary and
+  // its ListingData), so key records by type + id to avoid record collisions.
+  getDataID,
 })
